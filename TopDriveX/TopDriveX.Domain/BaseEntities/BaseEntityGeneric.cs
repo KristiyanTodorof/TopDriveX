@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TopDriveX.Domain.BaseEntity
+namespace TopDriveX.Domain.BaseEntities
 {
     public abstract class BaseEntityGeneric<TKey> where TKey : IEquatable<TKey>
     {

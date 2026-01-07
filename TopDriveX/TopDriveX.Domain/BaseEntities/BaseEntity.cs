@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TopDriveX.Domain.BaseEntity
+namespace TopDriveX.Domain.BaseEntities
 {
-    public class BaseEntity : BaseEntityGeneric<Guid>
+    public abstract class BaseEntity : BaseEntityGeneric<Guid>
     {
         protected BaseEntity() 
         { 
