@@ -20,4 +20,3 @@ namespace TopDriveX.Domain.Models
         public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
 }
-}
