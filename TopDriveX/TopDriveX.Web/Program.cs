@@ -1,27 +1,81 @@
+using TopDriveX.Infrastructure;
+using TopDriveX.Infrastructure.Data;
+using TopDriveX.Infrastructure.Data.Initializers;
+using TopDriveX.Infrastructure.ExternalServices.Nhtsa;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using TopDriveX.Infrastructure.Data.Initializers;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// Add Infrastructure
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// Initialize Database
+await DatabaseInitializer.InitializeAsync(app.Services);
+
+app.MapGet("/", () => "TopDriveX API");
+
+// Import Makes from NHTSA
+app.MapGet("/api/import/makes", async (IServiceProvider serviceProvider) =>
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    try
+    {
+        using var scope = serviceProvider.CreateScope();
+        var importService = scope.ServiceProvider.GetRequiredService<NhtsaImportService>();
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+        await importService.ImportMakesAsync();
 
-app.UseRouting();
+        return Results.Ok("Makes imported successfully!");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Error: {ex.Message}");
+    }
+});
 
-app.UseAuthorization();
+// Import Models for all Makes
+app.MapGet("/api/import/models", async (IServiceProvider serviceProvider) =>
+{
+    try
+    {
+        using var scope = serviceProvider.CreateScope();
+        var importService = scope.ServiceProvider.GetRequiredService<NhtsaImportService>();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+        var makes = await context.Makes.Take(10).ToListAsync(); // First 10 makes
+
+        foreach (var make in makes)
+        {
+            await importService.ImportModelsForMakeAsync(make.Id);
+        }
+
+        return Results.Ok($"Models imported for {makes.Count} makes!");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Error: {ex.Message}");
+    }
+});
+
+// Import Vehicle Types
+app.MapGet("/api/import/vehicle-types", async (IServiceProvider serviceProvider) =>
+{
+    try
+    {
+        using var scope = serviceProvider.CreateScope();
+        var importService = scope.ServiceProvider.GetRequiredService<NhtsaImportService>();
+
+        await importService.ImportVehicleTypesAsync();
+
+        return Results.Ok("Vehicle types imported successfully!");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Error: {ex.Message}");
+    }
+});
 
 app.Run();
