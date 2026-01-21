@@ -1,4 +1,4 @@
-﻿using TopDriveX.Domain.BaseEntities;
+﻿using TopDriveX.Domain.Models;
 using TopDriveX.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -104,5 +104,54 @@ public class NhtsaImportService
 
         await _context.SaveChangesAsync();
         _logger.LogInformation("Imported {Count} models for {MakeName}", imported, make.Name);
+    }
+
+    public async Task ImportVehicleTypesAsync()
+    {
+        _logger.LogInformation("Starting import of vehicle types from NHTSA");
+
+        var nhtsaVehicleTypes = await _nhtsaService.GetVehicleTypesAsync();
+
+        _logger.LogInformation("Received {Count} vehicle types from NHTSA API", nhtsaVehicleTypes.Count);
+
+        if (!nhtsaVehicleTypes.Any())
+        {
+            _logger.LogWarning("No vehicle types returned from NHTSA API");
+            return;
+        }
+
+        var imported = 0;
+        var skipped = 0;
+
+        // Get unique vehicle types
+        var uniqueTypes = nhtsaVehicleTypes
+            .GroupBy(vt => vt.VehicleTypeName)
+            .Select(g => g.First())
+            .ToList();
+
+        foreach (var nhtsaType in uniqueTypes)
+        {
+            var exists = await _context.VehicleTypes
+                .AnyAsync(vt => vt.Name == nhtsaType.VehicleTypeName);
+
+            if (exists)
+            {
+                skipped++;
+                continue;
+            }
+
+            var vehicleType = new VehicleType
+            {
+                Name = nhtsaType.VehicleTypeName,
+                NhtsaVehicleTypeId = nhtsaType.VehicleTypeId
+            };
+
+            _context.VehicleTypes.Add(vehicleType);
+            imported++;
+            _logger.LogInformation("Added vehicle type: {TypeName}", nhtsaType.VehicleTypeName);
+        }
+
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("Import completed. Imported: {Imported}, Skipped: {Skipped}", imported, skipped);
     }
 }
