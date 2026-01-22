@@ -1,24 +1,52 @@
-using TopDriveX.Infrastructure;
+﻿using TopDriveX.Infrastructure;
 using TopDriveX.Infrastructure.Data;
 using TopDriveX.Infrastructure.Data.Initializers;
 using TopDriveX.Infrastructure.ExternalServices.Nhtsa;
+using TopDriveX.Application;
+using TopDriveX.Application.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using TopDriveX.Infrastructure.Data.Initializers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Infrastructure
+// Add Infrastructure & Application
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
 
 var app = builder.Build();
+
+// Serve static files
+app.UseStaticFiles();
+app.UseDefaultFiles();
 
 // Initialize Database
 await DatabaseInitializer.InitializeAsync(app.Services);
 
-app.MapGet("/", () => "TopDriveX API");
+app.MapGet("/", () => Results.Redirect("/index.html"));
 
-// Import Makes from NHTSA
+// Get all makes
+app.MapGet("/api/makes", async (IMakeService makeService) =>
+{
+    var makes = await makeService.GetAllMakesAsync();
+    return Results.Ok(makes);
+});
+
+// Get models by make
+app.MapGet("/api/makes/{makeId:guid}/models", async (Guid makeId, IModelService modelService) =>
+{
+    var models = await modelService.GetModelsByMakeIdAsync(makeId);
+    return Results.Ok(models);
+});
+
+// Get all vehicle types
+app.MapGet("/api/vehicle-types", async (IVehicleTypeService vehicleTypeService) =>
+{
+    var vehicleTypes = await vehicleTypeService.GetAllVehicleTypesAsync();
+    return Results.Ok(vehicleTypes);
+});
+
+// Import endpoints...
 app.MapGet("/api/import/makes", async (IServiceProvider serviceProvider) =>
 {
     try
@@ -36,7 +64,6 @@ app.MapGet("/api/import/makes", async (IServiceProvider serviceProvider) =>
     }
 });
 
-// Import Models for all Makes
 app.MapGet("/api/import/models", async (IServiceProvider serviceProvider) =>
 {
     try
@@ -45,7 +72,7 @@ app.MapGet("/api/import/models", async (IServiceProvider serviceProvider) =>
         var importService = scope.ServiceProvider.GetRequiredService<NhtsaImportService>();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var makes = await context.Makes.Take(10).ToListAsync(); // First 10 makes
+        var makes = await context.Makes.Take(10).ToListAsync();
 
         foreach (var make in makes)
         {
@@ -60,7 +87,6 @@ app.MapGet("/api/import/models", async (IServiceProvider serviceProvider) =>
     }
 });
 
-// Import Vehicle Types
 app.MapGet("/api/import/vehicle-types", async (IServiceProvider serviceProvider) =>
 {
     try

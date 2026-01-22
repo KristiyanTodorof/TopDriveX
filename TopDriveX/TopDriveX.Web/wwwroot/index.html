@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopDriveX - Платформа за автомобили</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div id="app"></div>
+
+    <script type="module">
+        // API Service
+        const API_BASE_URL = '/api';
+
+        const api = {
+            async getMakes() {
+                const response = await fetch(`${API_BASE_URL}/makes`);
+                return response.json();
+            },
+            async getModelsByMake(makeId) {
+                const response = await fetch(`${API_BASE_URL}/makes/${makeId}/models`);
+                return response.json();
+            }
+        };
+
+        // Main App
+        class App {
+            constructor() {
+                this.makes = [];
+                this.selectedMake = null;
+                this.models = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadMakes();
+                this.render();
+            }
+
+            async loadMakes() {
+                try {
+                    this.makes = await api.getMakes();
+                    this.render();
+                } catch (error) {
+                    console.error('Error loading makes:', error);
+                }
+            }
+
+            async selectMake(make) {
+                this.selectedMake = make;
+                try {
+                    this.models = await api.getModelsByMake(make.id);
+                    this.render();
+                } catch (error) {
+                    console.error('Error loading models:', error);
+                }
+            }
+
+            render() {
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <!-- Header -->
+                    <header class="bg-white shadow-sm">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                            <h1 class="text-4xl font-bold text-gray-900">🚗 TopDriveX</h1>
+                            <p class="text-gray-600 mt-2">Намерете перфектния автомобил</p>
+                        </div>
+                    </header>
+
+                    <!-- Main Content -->
+                    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        ${this.selectedMake ? this.renderModels() : this.renderMakes()}
+                    </main>
+
+                    <!-- Footer -->
+                    <footer class="bg-white border-t mt-16">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-600">
+                            <p>© 2026 TopDriveX. All rights reserved.</p>
+                        </div>
+                    </footer>
+                `;
+
+                this.attachEventListeners();
+            }
+
+            renderMakes() {
+                if (this.makes.length === 0) {
+                    return `
+                        <div class="text-center py-12">
+                            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                            <p class="mt-4 text-gray-600">Зареждане...</p>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-semibold text-gray-900 mb-6">Изберете марка</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                            ${this.makes.map(make => `
+                                <div class="make-card bg-white rounded-lg shadow hover:shadow-lg transition-all p-6 cursor-pointer border-2 border-transparent hover:border-blue-500" data-make-id="${make.id}">
+                                    <div class="text-center">
+                                        <div class="h-16 flex items-center justify-center mb-3">
+                                            <span class="text-4xl">🚗</span>
+                                        </div>
+                                        <h3 class="font-semibold text-gray-900 text-lg">${make.name}</h3>
+                                        ${make.country ? `<p class="text-sm text-gray-500 mt-1">${make.country}</p>` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderModels() {
+                return `
+                    <div>
+                        <button class="back-btn mb-6 flex items-center text-blue-600 hover:text-blue-700 font-medium">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Назад към марките
+                        </button>
+
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                            Модели ${this.selectedMake.name}
+                        </h2>
+
+                        ${this.models.length === 0 ? `
+                            <div class="text-center py-12 bg-white rounded-lg">
+                                <p class="text-gray-500">Няма налични модели за тази марка</p>
+                            </div>
+                        ` : `
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${this.models.map(model => `
+                                    <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 border border-gray-200">
+                                        <h3 class="text-xl font-semibold text-gray-900 mb-2">${model.name}</h3>
+                                        <div class="text-sm text-gray-600 space-y-1">
+                                            ${model.yearFrom || model.yearTo ? `
+                                                <p>📅 ${model.yearFrom || '?'} - ${model.yearTo || 'сега'}</p>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+
+            attachEventListeners() {
+                // Make cards
+                document.querySelectorAll('.make-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const makeId = card.dataset.makeId;
+                        const make = this.makes.find(m => m.id === makeId);
+                        if (make) this.selectMake(make);
+                    });
+                });
+
+                // Back button
+                const backBtn = document.querySelector('.back-btn');
+                if (backBtn) {
+                    backBtn.addEventListener('click', () => {
+                        this.selectedMake = null;
+                        this.models = [];
+                        this.render();
+                    });
+                }
+            }
+        }
+
+        // Start app
+        new App();
+    </script>
+</body>
+</html>
