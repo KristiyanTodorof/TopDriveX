@@ -1,49 +1,132 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TopDriveX.Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/TopDriveX.Web.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - TopDriveX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#dc2626',
+                        secondary: '#991b1b',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TopDriveX.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Top Bar -->
+    <div class="bg-gray-900 text-white text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-between">
+            <div class="flex space-x-6">
+                <span>📞 +359 888 123 456</span>
+                <span>✉️ info@topdrivex.bg</span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-red-500">Вход</a>
+                <span>|</span>
+                <a href="#" class="hover:text-red-500">Регистрация</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <a asp-controller="Home" asp-action="Index" class="flex items-center space-x-3">
+                        <div class="text-4xl">🚗</div>
+                        <div>
+                            <div class="text-2xl font-bold text-red-600">TopDriveX</div>
+                            <div class="text-xs text-gray-600">Вашата платформа за автомобили</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <a asp-controller="Home" asp-action="Index" class="text-gray-700 hover:text-red-600 font-medium transition">
+                        Начало
+                    </a>
+                    <a asp-controller="Makes" asp-action="Index" class="text-gray-700 hover:text-red-600 font-medium transition">
+                        Марки
+                    </a>
+                    <a href="#" class="text-gray-700 hover:text-red-600 font-medium transition">
+                        Обяви
+                    </a>
+                    <a asp-controller="Home" asp-action="About" class="text-gray-700 hover:text-red-600 font-medium transition">
+                        За нас
+                    </a>
+                    <a asp-controller="Home" asp-action="Contact" class="text-gray-700 hover:text-red-600 font-medium transition">
+                        Контакти
+                    </a>
+                    <a href="#" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
+                        + Добави обява
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="text-3xl">🚗</div>
+                        <div class="text-2xl font-bold text-red-600">TopDriveX</div>
+                    </div>
+                    <p class="text-gray-400">Вашата платформа за намиране на перфектния автомобил в България.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-red-500">Бързи връзки</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a asp-controller="Home" asp-action="Index" class="hover:text-white transition">Начало</a></li>
+                        <li><a asp-controller="Makes" asp-action="Index" class="hover:text-white transition">Всички марки</a></li>
+                        <li><a href="#" class="hover:text-white transition">Нови обяви</a></li>
+                        <li><a href="#" class="hover:text-white transition">Промоции</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-red-500">Информация</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a asp-controller="Home" asp-action="About" class="hover:text-white transition">За нас</a></li>
+                        <li><a href="#" class="hover:text-white transition">Общи условия</a></li>
+                        <li><a href="#" class="hover:text-white transition">Политика за поверителност</a></li>
+                        <li><a href="#" class="hover:text-white transition">Помощ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-red-500">Контакти</h3>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <span>📍</span>
+                            <span>София, България</span>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="flex items-center space-x-2">
+                            <span>📞</span>
+                            <span>+359 888 123 456</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span>✉️</span>
+                            <span>info@topdrivex.bg</span>
                         </li>
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - TopDriveX.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 TopDriveX. Всички права запазени.</p>
+            </div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,0 +1,118 @@
+﻿@model MakeDto
+@{
+    ViewData["Title"] = Model.Name;
+    var models = ViewBag.Models as IEnumerable<ModelDto>;
+}
+
+<!-- Breadcrumb -->
+<div class="bg-gray-100 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center space-x-2 text-gray-600">
+            <a asp-controller="Home" asp-action="Index" class="hover:text-red-600">Начало</a>
+            <span>→</span>
+            <a asp-action="Index" class="hover:text-red-600">Марки</a>
+            <span>→</span>
+            <span class="text-gray-900 font-semibold">@Model.Name</span>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Make Header -->
+    <div class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl shadow-2xl p-12 mb-12">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-8">
+                <div class="text-8xl">🚗</div>
+                <div>
+                    <h1 class="text-5xl font-bold mb-3">@Model.Name</h1>
+                    @if (!string.IsNullOrEmpty(Model.Country))
+                    {
+                        <p class="text-2xl text-red-100">📍 Произход: @Model.Country</p>
+                    }
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-red-100 mb-2">Налични модели</p>
+                <p class="text-6xl font-bold">@(models?.Count() ?? 0)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-600">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 mb-1">Активни обяви</p>
+                    <p class="text-3xl font-bold text-gray-900">245</p>
+                </div>
+                <div class="text-4xl">📊</div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-600">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 mb-1">Средна цена</p>
+                    <p class="text-3xl font-bold text-gray-900">25,000 лв</p>
+                </div>
+                <div class="text-4xl">💰</div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-600">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 mb-1">Нови обяви</p>
+                    <p class="text-3xl font-bold text-gray-900">12 днес</p>
+                </div>
+                <div class="text-4xl">🔥</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Models Section -->
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-4xl font-bold text-gray-900">Модели @Model.Name</h2>
+        <button class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-semibold transition">
+            🔔 Абонирай се за нови обяви
+        </button>
+    </div>
+
+    @if (models != null && models.Any())
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach (var item in models)
+            {
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all p-8 border border-gray-200 hover:border-red-500 group">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 group-hover:text-red-600 transition">@item.Name</h3>
+                            @if (item.YearFrom.HasValue || item.YearTo.HasValue)
+                            {
+                                <p class="text-gray-600 mt-2 flex items-center">
+                                    <span class="mr-2">📅</span>
+                                    @(item.YearFrom?.ToString() ?? "?") - @(item.YearTo?.ToString() ?? "сега")
+                                </p>
+                            }
+                        </div>
+                        <div class="text-4xl group-hover:scale-110 transition-transform">🚗</div>
+                    </div>
+                    <div class="border-t pt-4 mt-4">
+                        <button class="w-full bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 font-semibold transition">
+                            Виж обяви (@(new Random().Next(5, 50)))
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="bg-gray-50 rounded-xl p-16 text-center border-2 border-dashed border-gray-300">
+            <div class="text-6xl mb-4">😔</div>
+            <p class="text-gray-600 text-xl mb-6">Няма налични модели за тази марка</p>
+            <button class="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 font-semibold transition">
+                Уведоми ме при нови модели
+            </button>
+        </div>
+    }
+</div>

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<MakeDto>
+@{
+    ViewData["Title"] = "Всички марки";
+}
+
+<!-- Header Section -->
+<div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-5xl font-bold mb-4">Всички марки автомобили</h1>
+        <p class="text-xl text-red-100">Изберете марка и разгледайте наличните модели</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Search -->
+    <div class="mb-8">
+        <input type="text" placeholder="🔍 Търсене на марка..."
+               class="w-full md:w-96 px-6 py-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg">
+    </div>
+
+    <!-- Stats -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-600">Общо марки</p>
+                <p class="text-3xl font-bold text-red-600">@Model.Count()</p>
+            </div>
+            <div class="text-5xl">🚗</div>
+        </div>
+    </div>
+
+    <!-- Makes Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+        @foreach (var make in Model)
+        {
+            <a asp-action="Details" asp-route-id="@make.Id"
+               class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all p-8 text-center border-2 border-transparent hover:border-red-500 group">
+                <div class="text-6xl mb-4 group-hover:scale-110 transition-transform">🚗</div>
+                <h3 class="font-bold text-gray-900 text-xl mb-2 group-hover:text-red-600 transition">@make.Name</h3>
+                @if (!string.IsNullOrEmpty(make.Country))
+                {
+                    <p class="text-sm text-gray-500">@make.Country</p>
+                }
+                <div class="mt-4 text-red-600 font-semibold opacity-0 group-hover:opacity-100 transition">
+                    Виж модели →
+                </div>
+            </a>
+        }
+    </div>
+</div>
