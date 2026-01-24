@@ -23,40 +23,40 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2 text-left">Марка</label>
-                            <select name="makeId" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                                <option value="">Всички марки</option>
+                            <label class="block text-gray-900 font-bold mb-2 text-left">Марка</label>
+                            <select name="makeId" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900 font-medium">
+                                <option value="" class="text-gray-900">Всички марки</option>
                                 @foreach (var make in Model.OrderBy(m => m.Name))
                                 {
-                                    <option value="@make.Id">@make.Name</option>
+                                    <option value="@make.Id" class="text-gray-900">@make.Name</option>
                                 }
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2 text-left">Тип</label>
-                            <select name="vehicleTypeId" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                                <option value="">Всички типове</option>
+                            <label class="block text-gray-900 font-bold mb-2 text-left">Тип</label>
+                            <select name="vehicleTypeId" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900 font-medium">
+                                <option value="" class="text-gray-900">Всички типове</option>
                                 @if (vehicleTypes != null)
                                 {
                                     @foreach (var type in vehicleTypes.OrderBy(t => t.Name))
                                     {
-                                        <option value="@type.Id">@type.Name</option>
+                                        <option value="@type.Id" class="text-gray-900">@type.Name</option>
                                     }
                                 }
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2 text-left">Мин. цена (лв)</label>
+                            <label class="block text-gray-900 font-bold mb-2 text-left">Мин. цена (лв)</label>
                             <input type="number" name="minPrice" placeholder="От 0"
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900 font-medium placeholder-gray-500">
                         </div>
 
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2 text-left">Макс. цена (лв)</label>
+                            <label class="block text-gray-900 font-bold mb-2 text-left">Макс. цена (лв)</label>
                             <input type="number" name="maxPrice" placeholder="До 100,000"
-                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900 font-medium placeholder-gray-500">
                         </div>
                     </div>
 
@@ -92,101 +92,6 @@
                 <div class="text-gray-600 font-medium">Поддръжка</div>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Popular Makes -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="flex justify-between items-center mb-8">
-        <h2 class="text-4xl font-bold text-gray-900">Популярни марки</h2>
-        <a asp-controller="Makes" asp-action="Index" class="text-red-600 hover:text-red-700 font-semibold flex items-center">
-            Виж всички
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-        </a>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        @foreach (var make in Model.Take(12))
-        {
-            <a asp-controller="Makes" asp-action="Details" asp-route-id="@make.Id"
-               class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all p-8 text-center border-2 border-transparent hover:border-red-500 group">
-                <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">🚗</div>
-                <h3 class="font-bold text-gray-900 text-lg group-hover:text-red-600 transition">@make.Name</h3>
-                <p class="text-sm text-gray-500 mt-2">Виж обяви</p>
-            </a>
-        }
-    </div>
-</div>
-
-<!-- Featured Listings -->
-<div class="bg-gray-100 py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-4xl font-bold text-gray-900 mb-8">Препоръчани обяви</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @for (int i = 0; i < 3; i++)
-            {
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition">
-                    <div class="h-48 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
-                        <span class="text-white text-6xl">🚗</span>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-bold text-gray-900">BMW X5 2020</h3>
-                            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">VIP</span>
-                        </div>
-                        <p class="text-gray-600 mb-4">Дизел • Автоматик • 45,000 км</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-3xl font-bold text-red-600">45,000 лв</span>
-                            <button class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
-                                Виж повече
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</div>
-
-<!-- Features -->
-<div class="bg-white py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center">Защо да изберете TopDriveX?</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="text-center">
-                <div class="bg-red-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span class="text-5xl">🔍</span>
-                </div>
-                <h3 class="text-2xl font-bold mb-4 text-gray-900">Лесно търсене</h3>
-                <p class="text-gray-600 text-lg">Намерете автомобила, който търсите бързо и лесно с нашите мощни филтри</p>
-            </div>
-            <div class="text-center">
-                <div class="bg-red-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span class="text-5xl">✅</span>
-                </div>
-                <h3 class="text-2xl font-bold mb-4 text-gray-900">Проверени обяви</h3>
-                <p class="text-gray-600 text-lg">Всички обяви са проверени и валидирани от нашия професионален екип</p>
-            </div>
-            <div class="text-center">
-                <div class="bg-red-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span class="text-5xl">💬</span>
-                </div>
-                <h3 class="text-2xl font-bold mb-4 text-gray-900">Директна връзка</h3>
-                <p class="text-gray-600 text-lg">Свържете се директно с продавача без посредници</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CTA Section -->
-<div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-16">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl font-bold mb-6">Готови да намерите вашия автомобил?</h2>
-        <p class="text-xl mb-8 text-red-100">Присъединете се към хиляди доволни клиенти</p>
-        <a asp-controller="Makes" asp-action="Index" class="inline-block bg-white text-red-600 px-10 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-xl">
-            Започнете сега
-        </a>
     </div>
 </div>
 

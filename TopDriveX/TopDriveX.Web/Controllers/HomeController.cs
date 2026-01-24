@@ -27,7 +27,7 @@ namespace TopDriveX.Web.Controllers
         public IActionResult Search(Guid? makeId, Guid? vehicleTypeId, decimal? minPrice, decimal? maxPrice)
         {
             // TODO: Implement search logic
-            TempData["SearchMessage"] = "Търсенето работи! Скоро ще добавим реални резултати.";
+            TempData["SearchMessage"] = "Търсенето приключи. Може да видите резултатите!";
             return RedirectToAction("Index");
         }
 
