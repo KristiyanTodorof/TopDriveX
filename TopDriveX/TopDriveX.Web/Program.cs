@@ -6,6 +6,7 @@ using TopDriveX.Application;
 using TopDriveX.Application.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MVC
@@ -17,8 +18,30 @@ builder.Services.AddApplication();
 
 var app = builder.Build();
 
-// Initialize Database
-await DatabaseInitializer.InitializeAsync(app.Services);
+// Initialize Database and Seed Data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    var logger = services.GetRequiredService<ILogger<ApplicationDbContext>>();
+
+    try
+    {
+        logger.LogInformation("Starting database migration...");
+
+        // Apply migrations
+        await context.Database.MigrateAsync();
+
+        logger.LogInformation("Database migration completed successfully");
+
+        // Seed data
+        await DatabaseSeeder.SeedDataAsync(context, logger);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while initializing the database.");
+    }
+}
 
 // Configure middleware
 app.UseStaticFiles();
