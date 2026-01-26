@@ -17,7 +17,6 @@ namespace TopDriveX.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    NhtsaMakeId = table.Column<int>(type: "int", nullable: true),
                     LogoUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -70,7 +69,6 @@ namespace TopDriveX.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    NhtsaVehicleTypeId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -89,7 +87,6 @@ namespace TopDriveX.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MakeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    NhtsaModelId = table.Column<int>(type: "int", nullable: true),
                     YearFrom = table.Column<int>(type: "int", nullable: true),
                     YearTo = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -349,22 +346,10 @@ namespace TopDriveX.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Makes_NhtsaMakeId",
-                table: "Makes",
-                column: "NhtsaMakeId",
-                unique: true,
-                filter: "[NhtsaMakeId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Models_MakeId_Name",
                 table: "Models",
                 columns: new[] { "MakeId", "Name" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Models_NhtsaModelId",
-                table: "Models",
-                column: "NhtsaModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SavedSearches_UserId",
@@ -450,13 +435,6 @@ namespace TopDriveX.Infrastructure.Migrations
                 table: "VehicleTypes",
                 column: "Name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_VehicleTypes_NhtsaVehicleTypeId",
-                table: "VehicleTypes",
-                column: "NhtsaVehicleTypeId",
-                unique: true,
-                filter: "[NhtsaVehicleTypeId] IS NOT NULL");
         }
 
         /// <inheritdoc />

@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TopDriveX.Infrastructure.ExternalServices;
-using TopDriveX.Infrastructure.ExternalServices.Nhtsa;
 
 namespace TopDriveX.Infrastructure.Data
 {
@@ -37,13 +35,6 @@ namespace TopDriveX.Infrastructure.Data
                 options.EnableDetailedErrors();
 #endif
             });
-
-            // Add HttpClient for NHTSA Service
-            services.AddHttpClient<NhtsaService>();
-
-            // Add NHTSA Services
-            services.AddScoped<NhtsaImportService>();
-
 
             return services;
         }

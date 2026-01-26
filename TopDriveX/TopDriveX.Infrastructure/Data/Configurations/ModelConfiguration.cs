@@ -21,9 +21,6 @@ namespace TopDriveX.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(m => m.NhtsaModelId)
-                .IsRequired(false);
-
             builder.Property(m => m.YearFrom)
                 .IsRequired(false);
 
@@ -33,7 +30,6 @@ namespace TopDriveX.Infrastructure.Data.Configurations
             builder.HasIndex(m => new { m.MakeId, m.Name })
                 .IsUnique();
 
-            builder.HasIndex(m => m.NhtsaModelId);
         }
     }
 }

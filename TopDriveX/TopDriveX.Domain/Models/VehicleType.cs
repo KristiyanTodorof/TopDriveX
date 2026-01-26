@@ -10,7 +10,6 @@ namespace TopDriveX.Domain.Models
     public class VehicleType : BaseEntity
     {
         public string Name { get; set; }
-        public int? NhtsaVehicleTypeId { get; set; }
         public string? Description { get; set; }
 
         // Navigation

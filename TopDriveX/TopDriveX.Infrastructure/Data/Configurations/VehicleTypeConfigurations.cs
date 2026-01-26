@@ -24,13 +24,7 @@ namespace TopDriveX.Infrastructure.Data.Configurations
             builder.Property(vt => vt.Description)
                 .HasMaxLength(500);
 
-            builder.Property(vt => vt.NhtsaVehicleTypeId)
-                .IsRequired(false);
-
             builder.HasIndex(vt => vt.Name)
-                .IsUnique();
-
-            builder.HasIndex(vt => vt.NhtsaVehicleTypeId)
                 .IsUnique();
 
             builder.HasMany(vt => vt.Vehicles)

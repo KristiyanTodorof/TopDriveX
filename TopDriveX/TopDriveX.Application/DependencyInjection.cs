@@ -19,6 +19,7 @@ namespace TopDriveX.Application
             services.AddScoped<IModelService, ModelService>();
             services.AddScoped<IVehicleTypeService, VehicleTypeService>();
             services.AddScoped<IVehicleService, VehicleService>();
+            services.AddScoped<ILogoService, LogoService>();
 
             return services;
         }

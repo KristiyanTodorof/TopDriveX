@@ -27,13 +27,7 @@ namespace TopDriveX.Infrastructure.Data.Configurations
             builder.Property(m => m.Country)
                 .HasMaxLength(100);
 
-            builder.Property(m => m.NhtsaMakeId)
-                .IsRequired(false);
-
             builder.HasIndex(m => m.Name)
-                .IsUnique();
-
-            builder.HasIndex(m => m.NhtsaMakeId)
                 .IsUnique();
 
             builder.HasMany(m => m.Models)

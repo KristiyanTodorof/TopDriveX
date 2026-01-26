@@ -1,4 +1,6 @@
-﻿@model IEnumerable<MakeDto>
+﻿@using TopDriveX.Application.Contracts
+@model IEnumerable<MakeDto>
+@inject ILogoService LogoService
 @{
     ViewData["Title"] = "Начало";
     var vehicleTypes = ViewBag.VehicleTypes as IEnumerable<VehicleTypeDto>;
@@ -90,21 +92,25 @@
 
 <!-- Popular Makes -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="flex justify-between items-center mb-8">
-        <h2 class="text-4xl font-bold text-gray-900">Популярни марки</h2>
-        <a asp-controller="Makes" asp-action="Index" class="text-red-600 hover:text-red-700 font-semibold flex items-center">
+    <div class="text-center mb-8">
+        <h2 class="text-4xl font-bold text-gray-900 mb-2">Популярни марки</h2>
+        <a asp-controller="Makes" asp-action="Index" class="inline-flex items-center text-red-600 hover:text-red-700 font-semibold">
             Виж всички
             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
         </a>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
         @foreach (var make in Model.Take(12))
         {
             <a asp-controller="Makes" asp-action="Details" asp-route-id="@make.Id"
                class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all p-8 text-center border-2 border-transparent hover:border-red-500 group">
-                <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">🚗</div>
+                <div class="mb-4 flex items-center justify-center h-20">
+                    <img src="@LogoService.GetMakeLogoUrl(make.Name)"
+                         alt="@make.Name Logo"
+                         class="h-16 w-auto object-contain group-hover:scale-110 transition-transform">
+                </div>
                 <h3 class="font-bold text-gray-900 text-lg group-hover:text-red-600 transition">@make.Name</h3>
                 <p class="text-sm text-gray-500 mt-2">Виж обяви</p>
             </a>

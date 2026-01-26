@@ -11,7 +11,6 @@ namespace TopDriveX.Domain.Models
     public class Make : BaseEntity
     {
         public string Name { get; set; }
-        public int? NhtsaMakeId { get; set; }
         public string? LogoUrl { get; set; }
         public string? Country { get; set; }
 

@@ -194,9 +194,6 @@ namespace TopDriveX.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("NhtsaMakeId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -204,10 +201,6 @@ namespace TopDriveX.Infrastructure.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("NhtsaMakeId")
-                        .IsUnique()
-                        .HasFilter("[NhtsaMakeId] IS NOT NULL");
 
                     b.ToTable("Makes", (string)null);
                 });
@@ -235,9 +228,6 @@ namespace TopDriveX.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("NhtsaModelId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -248,8 +238,6 @@ namespace TopDriveX.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NhtsaModelId");
 
                     b.HasIndex("MakeId", "Name")
                         .IsUnique();
@@ -616,9 +604,6 @@ namespace TopDriveX.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("NhtsaVehicleTypeId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -626,10 +611,6 @@ namespace TopDriveX.Infrastructure.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("NhtsaVehicleTypeId")
-                        .IsUnique()
-                        .HasFilter("[NhtsaVehicleTypeId] IS NOT NULL");
 
                     b.ToTable("VehicleTypes", (string)null);
                 });

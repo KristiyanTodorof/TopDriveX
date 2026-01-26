@@ -12,6 +12,7 @@
                     colors: {
                         primary: '#dc2626',
                         secondary: '#991b1b',
+                        headerGray: '#FCFCFC',
                     }
                 }
             }
@@ -35,19 +36,18 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav class="shadow-lg sticky top-0 z-50" style="background-color: #FCFCFC;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo - Left -->
                 <div class="flex items-center">
-                    <a asp-controller="Home" asp-action="Index" class="flex items-center space-x-3">
-                        <div class="text-4xl">🚗</div>
-                        <div>
-                            <div class="text-2xl font-bold text-red-600">TopDriveX</div>
-                            <div class="text-xs text-gray-600">Вашата платформа за автомобили</div>
-                        </div>
+                    <a asp-controller="Home" asp-action="Index" class="flex items-center">
+                        <img src="~/images/logo.png" alt="TopDriveX Logo" class="h-16 w-auto">
                     </a>
                 </div>
-                <div class="flex items-center space-x-8">
+
+                <!-- Navigation Links - Center -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-8">
                     <a asp-controller="Home" asp-action="Index" class="text-gray-700 hover:text-red-600 font-medium transition">
                         Начало
                     </a>
@@ -63,6 +63,10 @@
                     <a asp-controller="Home" asp-action="Contact" class="text-gray-700 hover:text-red-600 font-medium transition">
                         Контакти
                     </a>
+                </div>
+
+                <!-- Add Listing Button - Right -->
+                <div class="flex items-center">
                     <a href="#" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
                         + Добави обява
                     </a>
@@ -75,56 +79,79 @@
     <main class="flex-grow">
         @RenderBody()
     </main>
-
     <!-- Footer -->
     <footer class="bg-gray-900 text-white mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="text-3xl">🚗</div>
-                        <div class="text-2xl font-bold text-red-600">TopDriveX</div>
-                    </div>
-                    <p class="text-gray-400">Вашата платформа за намиране на перфектния автомобил в България.</p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Main Footer Content -->
+            <div class="py-10">
+                <!-- Logo and Description - Centered -->
+                <div class="text-center mb-8">
+                    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+                        Вашият надежден партньор за намиране и продажба на автомобили в България.
+                    </p>
                 </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4 text-red-500">Бързи връзки</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a asp-controller="Home" asp-action="Index" class="hover:text-white transition">Начало</a></li>
-                        <li><a asp-controller="Makes" asp-action="Index" class="hover:text-white transition">Всички марки</a></li>
-                        <li><a href="#" class="hover:text-white transition">Нови обяви</a></li>
-                        <li><a href="#" class="hover:text-white transition">Промоции</a></li>
-                    </ul>
+
+                <!-- Navigation Links - Centered -->
+                <div class="flex justify-center space-x-6 mb-8 flex-wrap text-sm">
+                    <a asp-controller="Home" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">
+                        Начало
+                    </a>
+                    <a asp-controller="Vehicles" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">
+                        Обяви
+                    </a>
+                    <a asp-controller="Makes" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">
+                        Марки
+                    </a>
+                    <a asp-controller="Home" asp-action="About" class="text-gray-400 hover:text-red-500 transition">
+                        За нас
+                    </a>
+                    <a asp-controller="Home" asp-action="Contact" class="text-gray-400 hover:text-red-500 transition">
+                        Контакти
+                    </a>
                 </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4 text-red-500">Информация</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a asp-controller="Home" asp-action="About" class="hover:text-white transition">За нас</a></li>
-                        <li><a href="#" class="hover:text-white transition">Общи условия</a></li>
-                        <li><a href="#" class="hover:text-white transition">Политика за поверителност</a></li>
-                        <li><a href="#" class="hover:text-white transition">Помощ</a></li>
-                    </ul>
+
+                <!-- Contact Info - Inline -->
+                <div class="flex justify-center space-x-8 mb-6 flex-wrap text-sm text-gray-400">
+                    <span class="flex items-center">
+                        <span class="mr-2">📍</span> София, България
+                    </span>
+                    <span class="flex items-center">
+                        <span class="mr-2">📞</span> +359 888 123 456
+                    </span>
+                    <span class="flex items-center">
+                        <span class="mr-2">✉️</span> info@topdrivex.bg
+                    </span>
                 </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4 text-red-500">Контакти</h3>
-                    <ul class="space-y-3 text-gray-400">
-                        <li class="flex items-center space-x-2">
-                            <span>📍</span>
-                            <span>София, България</span>
-                        </li>
-                        <li class="flex items-center space-x-2">
-                            <span>📞</span>
-                            <span>+359 888 123 456</span>
-                        </li>
-                        <li class="flex items-center space-x-2">
-                            <span>✉️</span>
-                            <span>info@topdrivex.bg</span>
-                        </li>
-                    </ul>
+
+                <!-- Social Media - Centered -->
+                <div class="flex justify-center space-x-3">
+                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
+                        <span class="text-lg">📘</span>
+                    </a>
+                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
+                        <span class="text-lg">📷</span>
+                    </a>
+                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
+                        <span class="text-lg">🐦</span>
+                    </a>
+                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
+                        <span class="text-lg">▶️</span>
+                    </a>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2026 TopDriveX. Всички права запазени.</p>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-800 py-4">
+                <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
+                    <p class="mb-2 md:mb-0">
+                        &copy; 2026 <span class="text-red-500 font-semibold">TopDriveX</span>. Всички права запазени.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-red-500 transition">Поверителност</a>
+                        <a href="#" class="hover:text-red-500 transition">Условия</a>
+                        <a href="#" class="hover:text-red-500 transition">Cookies</a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
