@@ -11,5 +11,6 @@ namespace TopDriveX.Application.Contracts
     {
         Task<IEnumerable<MakeDto>> GetAllMakesAsync();
         Task<MakeDto?> GetMakeByIdAsync(Guid id);
+        Task<MakeDetailsDto?> GetMakeDetailsAsync(Guid id);
     }
 }

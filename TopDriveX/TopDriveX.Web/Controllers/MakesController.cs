@@ -6,12 +6,10 @@ namespace TopDriveX.Web.Controllers
     public class MakesController : Controller
     {
         private readonly IMakeService _makeService;
-        private readonly IModelService _modelService;
 
-        public MakesController(IMakeService makeService, IModelService modelService)
+        public MakesController(IMakeService makeService)
         {
             _makeService = makeService;
-            _modelService = modelService;
         }
 
         public async Task<IActionResult> Index()
@@ -22,14 +20,12 @@ namespace TopDriveX.Web.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
-            var make = await _makeService.GetMakeByIdAsync(id);
-            if (make == null)
+            var makeDetails = await _makeService.GetMakeDetailsAsync(id);
+
+            if (makeDetails == null)
                 return NotFound();
 
-            var models = await _modelService.GetModelsByMakeIdAsync(id);
-
-            ViewBag.Models = models;
-            return View(make);
+            return View(makeDetails);
         }
     }
 }

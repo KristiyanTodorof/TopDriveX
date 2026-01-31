@@ -176,12 +176,84 @@ namespace TopDriveX.Infrastructure.Data.Initializers
 
                 logger.LogInformation($"Vehicles seeded: {vehicles.Count}");
 
+                // ==================== SEED ADVERTISEMENTS ====================
+                var advertisements = new List<Advertisement>();
+                var users = new List<User>();
+
+                // Create some demo users first
+                for (int i = 0; i < 5; i++)
+                {
+                    users.Add(new User
+                    {
+                        Username = $"user{i + 1}",
+                        Email = $"user{i + 1}@topdrivex.com",
+                        PasswordHash = "dummy_hash_" + i, // In production, use proper hashing
+                        FirstName = $"User",
+                        LastName = $"{i + 1}",
+                        PhoneNumber = $"08{random.Next(10000000, 99999999)}",
+                        UserType = i == 0 ? UserType.Admin : (i < 3 ? UserType.Dealer : UserType.Private),
+                        City = cities[random.Next(cities.Length)],
+                        IsEmailVerified = true,
+                        IsPhoneVerified = true,
+                        IsActive = true
+                    });
+                }
+
+                await context.Users.AddRangeAsync(users);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation($"Users seeded: {users.Count}");
+
+                // Create advertisements for vehicles (70% of vehicles get an ad)
+                foreach (var vehicle in vehicles)
+                {
+                    if (random.Next(100) < 70)
+                    {
+                        var make = makes.First(m => m.Id == vehicle.MakeId);
+                        var model = models.First(m => m.Id == vehicle.ModelId);
+                        var user = users[random.Next(users.Count)];
+
+                        // Determine status
+                        var statusRoll = random.Next(100);
+                        var status = statusRoll switch
+                        {
+                            < 80 => AdvertisementStatus.Active,
+                            < 90 => AdvertisementStatus.Pending,
+                            < 95 => AdvertisementStatus.Sold,
+                            _ => AdvertisementStatus.Expired
+                        };
+
+                        advertisements.Add(new Advertisement
+                        {
+                            VehicleId = vehicle.Id,
+                            UserId = user.Id,
+                            Title = $"{make.Name} {model.Name} {vehicle.Year}г. - {vehicle.City}",
+                            Description = vehicle.Description ?? "Отличен автомобил в много добро състояние.",
+                            Price = vehicle.Price,
+                            IsNegotiable = random.Next(2) == 0,
+                            Status = status,
+                            IsFeatured = random.Next(100) < 20, // 20% са featured
+                            FeaturedUntil = random.Next(100) < 20 ? DateTime.UtcNow.AddDays(random.Next(7, 30)) : null,
+                            PublishedAt = DateTime.UtcNow.AddDays(-random.Next(0, 30)),
+                            ExpiresAt = DateTime.UtcNow.AddDays(random.Next(30, 90)),
+                            ViewCount = random.Next(0, 500),
+                            ContactCount = random.Next(0, 50),
+                            FavoriteCount = random.Next(0, 20)
+                        });
+                    }
+                }
+
+                await context.Advertisements.AddRangeAsync(advertisements);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation($"Advertisements seeded: {advertisements.Count}");
+
                 // ==================== NO IMAGES - REMOVED ====================
                 // VehicleImages table will remain empty
                 // Frontend should handle missing images gracefully
 
                 logger.LogInformation($"Data seeding completed successfully.");
-                logger.LogInformation($"Created {makes.Count} makes, {models.Count} models, {vehicles.Count} vehicles.");
+                logger.LogInformation($"Created {makes.Count} makes, {models.Count} models, {vehicles.Count} vehicles, {users.Count} users, {advertisements.Count} advertisements.");
             }
             catch (Exception ex)
             {
