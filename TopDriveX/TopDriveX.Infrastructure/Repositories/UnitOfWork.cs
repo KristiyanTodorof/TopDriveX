@@ -9,7 +9,7 @@ using TopDriveX.Application.Contracts;
 using TopDriveX.Domain.Models;
 using TopDriveX.Infrastructure.Data;
 
-namespace TopDriveX.Application.Services
+namespace TopDriveX.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {

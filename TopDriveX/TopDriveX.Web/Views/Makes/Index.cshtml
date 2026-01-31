@@ -14,7 +14,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Search -->
     <div class="mb-8">
-        <input type="text" placeholder="🔍 Търсене на марка..."
+        <input type="text" placeholder="Търсене на марка..."
                class="w-full md:w-96 px-6 py-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg">
     </div>
     <!-- Stats -->
@@ -24,11 +24,10 @@
                 <p class="text-gray-600">Общо марки</p>
                 <p class="text-3xl font-bold text-red-600">@Model.Count()</p>
             </div>
-            <div class="text-5xl">🚗</div>
         </div>
     </div>
     <!-- Makes Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         @foreach (var make in Model)
         {
             <a asp-action="Details" asp-route-id="@make.Id"

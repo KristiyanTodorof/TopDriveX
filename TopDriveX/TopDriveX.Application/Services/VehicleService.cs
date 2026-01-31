@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using TopDriveX.Application.Contracts;
 using TopDriveX.Application.Dtos;
 using TopDriveX.Domain.Models;
@@ -22,6 +18,12 @@ namespace TopDriveX.Application.Services
         {
             var vehicles = await _unitOfWork.Vehicles.GetAllAsync();
 
+            // Load related data
+            foreach (var vehicle in vehicles)
+            {
+                await LoadVehicleRelatedDataAsync(vehicle);
+            }
+
             return vehicles.Select(v => new VehicleListDto
             {
                 Id = v.Id,
@@ -32,6 +34,7 @@ namespace TopDriveX.Application.Services
                 Mileage = v.Mileage,
                 City = v.City,
                 MainImage = v.Images?.FirstOrDefault(i => i.IsMain)?.ImageUrl
+                    ?? v.Images?.FirstOrDefault()?.ImageUrl
             });
         }
 
@@ -41,6 +44,8 @@ namespace TopDriveX.Application.Services
 
             if (vehicle == null)
                 return null;
+
+            await LoadVehicleRelatedDataAsync(vehicle);
 
             return new VehicleDto
             {
@@ -54,7 +59,7 @@ namespace TopDriveX.Application.Services
                 TransmissionType = vehicle.TransmissionType.ToString(),
                 Color = vehicle.Color,
                 City = vehicle.City,
-                Images = vehicle.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
+                Images = vehicle.Images?.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).ToList() ?? new List<string>()
             };
         }
 
@@ -127,6 +132,12 @@ namespace TopDriveX.Application.Services
         {
             var vehicles = await _unitOfWork.Vehicles.GetAllAsync();
 
+            // Load related data
+            foreach (var vehicle in vehicles)
+            {
+                await LoadVehicleRelatedDataAsync(vehicle);
+            }
+
             var filtered = vehicles.AsEnumerable();
 
             if (makeId.HasValue)
@@ -166,14 +177,20 @@ namespace TopDriveX.Application.Services
                 Mileage = v.Mileage,
                 City = v.City,
                 MainImage = v.Images?.FirstOrDefault(i => i.IsMain)?.ImageUrl
+                    ?? v.Images?.FirstOrDefault()?.ImageUrl
             });
         }
 
         public async Task<IEnumerable<VehicleListDto>> GetFeaturedVehiclesAsync(int count = 6)
         {
-            var vehicles = await _unitOfWork.Vehicles.GetAllAsync();
+            var vehicles = (await _unitOfWork.Vehicles.GetAllAsync()).Take(count);
 
-            return vehicles.Take(count).Select(v => new VehicleListDto
+            foreach (var vehicle in vehicles)
+            {
+                await LoadVehicleRelatedDataAsync(vehicle);
+            }
+
+            return vehicles.Select(v => new VehicleListDto
             {
                 Id = v.Id,
                 MakeName = v.Make?.Name ?? "",
@@ -183,27 +200,53 @@ namespace TopDriveX.Application.Services
                 Mileage = v.Mileage,
                 City = v.City,
                 MainImage = v.Images?.FirstOrDefault(i => i.IsMain)?.ImageUrl
+                    ?? v.Images?.FirstOrDefault()?.ImageUrl
             });
         }
 
         public async Task<IEnumerable<VehicleListDto>> GetLatestVehiclesAsync(int count = 10)
         {
-            var vehicles = await _unitOfWork.Vehicles.GetAllAsync();
-
-            return vehicles
+            var vehicles = (await _unitOfWork.Vehicles.GetAllAsync())
                 .OrderByDescending(v => v.CreatedAt)
-                .Take(count)
-                .Select(v => new VehicleListDto
-                {
-                    Id = v.Id,
-                    MakeName = v.Make?.Name ?? "",
-                    ModelName = v.Model?.Name ?? "",
-                    Year = v.Year,
-                    Price = v.Price,
-                    Mileage = v.Mileage,
-                    City = v.City,
-                    MainImage = v.Images?.FirstOrDefault(i => i.IsMain)?.ImageUrl
-                });
+                .Take(count);
+
+            foreach (var vehicle in vehicles)
+            {
+                await LoadVehicleRelatedDataAsync(vehicle);
+            }
+
+            return vehicles.Select(v => new VehicleListDto
+            {
+                Id = v.Id,
+                MakeName = v.Make?.Name ?? "",
+                ModelName = v.Model?.Name ?? "",
+                Year = v.Year,
+                Price = v.Price,
+                Mileage = v.Mileage,
+                City = v.City,
+                MainImage = v.Images?.FirstOrDefault(i => i.IsMain)?.ImageUrl
+                    ?? v.Images?.FirstOrDefault()?.ImageUrl
+            });
+        }
+
+        // Helper method to load related navigation properties
+        private async Task LoadVehicleRelatedDataAsync(Vehicle vehicle)
+        {
+            if (vehicle.Make == null)
+            {
+                vehicle.Make = await _unitOfWork.Makes.GetByIdAsync(vehicle.MakeId);
+            }
+
+            if (vehicle.Model == null)
+            {
+                vehicle.Model = await _unitOfWork.Models.GetByIdAsync(vehicle.ModelId);
+            }
+
+            if (vehicle.Images == null || !vehicle.Images.Any())
+            {
+                var allImages = await _unitOfWork.VehicleImages.FindAsync(i => i.VehicleId == vehicle.Id);
+                vehicle.Images = allImages.OrderBy(i => i.DisplayOrder).ToList();
+            }
         }
     }
 }

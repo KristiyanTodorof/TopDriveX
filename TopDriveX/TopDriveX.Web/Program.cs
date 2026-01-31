@@ -2,6 +2,7 @@
 using TopDriveX.Infrastructure.Data.Initializers;
 using TopDriveX.Application;
 using Microsoft.EntityFrameworkCore;
+using TopDriveX.Application.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,13 +25,10 @@ using (var scope = app.Services.CreateScope())
     try
     {
         logger.LogInformation("Starting database migration...");
-
-        // Apply migrations
         await context.Database.MigrateAsync();
-
         logger.LogInformation("Database migration completed successfully");
 
-        // Seed data
+        // Pass carImageService to seeder
         await DatabaseSeeder.SeedDataAsync(context, logger);
     }
     catch (Exception ex)

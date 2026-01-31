@@ -12,7 +12,7 @@ using TopDriveX.Infrastructure.Data;
 namespace TopDriveX.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260126195252_InitialCreate")]
+    [Migration("20260131121727_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

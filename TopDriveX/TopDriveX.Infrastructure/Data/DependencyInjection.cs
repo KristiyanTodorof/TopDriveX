@@ -2,10 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TopDriveX.Application.Contracts;
+using TopDriveX.Application.Services;
+using TopDriveX.Infrastructure.Repositories;
 
 namespace TopDriveX.Infrastructure.Data
 {
@@ -36,6 +35,9 @@ namespace TopDriveX.Infrastructure.Data
 #endif
             });
 
+            // Register UnitOfWork and Repository pattern
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             return services;
         }
 
@@ -63,6 +65,9 @@ namespace TopDriveX.Infrastructure.Data
                 options.EnableDetailedErrors();
 #endif
             });
+
+            // Register UnitOfWork and Repository pattern
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

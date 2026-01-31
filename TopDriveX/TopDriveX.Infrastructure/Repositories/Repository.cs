@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using TopDriveX.Application.Contracts;
 using TopDriveX.Infrastructure.Data;
 
-namespace TopDriveX.Application.Services
+namespace TopDriveX.Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {

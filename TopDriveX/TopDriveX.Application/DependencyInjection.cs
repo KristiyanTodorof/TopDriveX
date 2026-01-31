@@ -13,7 +13,6 @@ namespace TopDriveX.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IMakeService, MakeService>();
             services.AddScoped<IModelService, ModelService>();

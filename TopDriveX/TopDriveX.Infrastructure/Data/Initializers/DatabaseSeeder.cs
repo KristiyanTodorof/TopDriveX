@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TopDriveX.Domain.Enums;
 using TopDriveX.Domain.Models;
-using TopDriveX.Infrastructure.Data;
 
 namespace TopDriveX.Infrastructure.Data.Initializers
 {
@@ -58,165 +56,129 @@ namespace TopDriveX.Infrastructure.Data.Initializers
                     new Model { MakeId = makes[0].Id, Name = "X5", YearFrom = 2013, YearTo = null },
                     new Model { MakeId = makes[0].Id, Name = "3 Series", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[0].Id, Name = "5 Series", YearFrom = 2010, YearTo = null },
-                    new Model { MakeId = makes[0].Id, Name = "7 Series", YearFrom = 2015, YearTo = null },
                     
                     // Mercedes-Benz Models
                     new Model { MakeId = makes[1].Id, Name = "A-Class", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[1].Id, Name = "C-Class", YearFrom = 2014, YearTo = null },
                     new Model { MakeId = makes[1].Id, Name = "E-Class", YearFrom = 2016, YearTo = null },
-                    new Model { MakeId = makes[1].Id, Name = "S-Class", YearFrom = 2013, YearTo = null },
-                    new Model { MakeId = makes[1].Id, Name = "GLA", YearFrom = 2014, YearTo = null },
-                    new Model { MakeId = makes[1].Id, Name = "GLC", YearFrom = 2015, YearTo = null },
                     new Model { MakeId = makes[1].Id, Name = "GLE", YearFrom = 2015, YearTo = null },
                     
                     // Audi Models
                     new Model { MakeId = makes[2].Id, Name = "A3", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[2].Id, Name = "A4", YearFrom = 2015, YearTo = null },
-                    new Model { MakeId = makes[2].Id, Name = "A6", YearFrom = 2011, YearTo = null },
-                    new Model { MakeId = makes[2].Id, Name = "Q3", YearFrom = 2011, YearTo = null },
                     new Model { MakeId = makes[2].Id, Name = "Q5", YearFrom = 2016, YearTo = null },
-                    new Model { MakeId = makes[2].Id, Name = "Q7", YearFrom = 2015, YearTo = null },
                     
                     // Toyota Models
                     new Model { MakeId = makes[3].Id, Name = "Corolla", YearFrom = 2013, YearTo = null },
-                    new Model { MakeId = makes[3].Id, Name = "Camry", YearFrom = 2011, YearTo = null },
                     new Model { MakeId = makes[3].Id, Name = "RAV4", YearFrom = 2013, YearTo = null },
                     new Model { MakeId = makes[3].Id, Name = "Yaris", YearFrom = 2011, YearTo = null },
-                    new Model { MakeId = makes[3].Id, Name = "Avensis", YearFrom = 2009, YearTo = 2018 },
-                    new Model { MakeId = makes[3].Id, Name = "Land Cruiser", YearFrom = 2007, YearTo = null },
                     
                     // Volkswagen Models
                     new Model { MakeId = makes[4].Id, Name = "Golf", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[4].Id, Name = "Passat", YearFrom = 2010, YearTo = null },
                     new Model { MakeId = makes[4].Id, Name = "Tiguan", YearFrom = 2016, YearTo = null },
-                    new Model { MakeId = makes[4].Id, Name = "Polo", YearFrom = 2009, YearTo = null },
-                    new Model { MakeId = makes[4].Id, Name = "Touareg", YearFrom = 2010, YearTo = null },
                     
                     // Honda Models
                     new Model { MakeId = makes[5].Id, Name = "Civic", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[5].Id, Name = "Accord", YearFrom = 2008, YearTo = null },
                     new Model { MakeId = makes[5].Id, Name = "CR-V", YearFrom = 2012, YearTo = null },
-                    new Model { MakeId = makes[5].Id, Name = "Jazz", YearFrom = 2008, YearTo = null },
                     
                     // Ford Models
                     new Model { MakeId = makes[6].Id, Name = "Focus", YearFrom = 2011, YearTo = null },
                     new Model { MakeId = makes[6].Id, Name = "Fiesta", YearFrom = 2008, YearTo = null },
                     new Model { MakeId = makes[6].Id, Name = "Mondeo", YearFrom = 2014, YearTo = null },
-                    new Model { MakeId = makes[6].Id, Name = "Kuga", YearFrom = 2012, YearTo = null },
-                    new Model { MakeId = makes[6].Id, Name = "Mustang", YearFrom = 2015, YearTo = null },
                     
                     // Renault Models
                     new Model { MakeId = makes[7].Id, Name = "Clio", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[7].Id, Name = "Megane", YearFrom = 2015, YearTo = null },
                     new Model { MakeId = makes[7].Id, Name = "Captur", YearFrom = 2013, YearTo = null },
-                    new Model { MakeId = makes[7].Id, Name = "Kadjar", YearFrom = 2015, YearTo = null },
                     
                     // Peugeot Models
                     new Model { MakeId = makes[8].Id, Name = "208", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[8].Id, Name = "308", YearFrom = 2013, YearTo = null },
                     new Model { MakeId = makes[8].Id, Name = "3008", YearFrom = 2016, YearTo = null },
-                    new Model { MakeId = makes[8].Id, Name = "5008", YearFrom = 2017, YearTo = null },
                     
                     // Skoda Models
                     new Model { MakeId = makes[9].Id, Name = "Octavia", YearFrom = 2013, YearTo = null },
                     new Model { MakeId = makes[9].Id, Name = "Superb", YearFrom = 2015, YearTo = null },
                     new Model { MakeId = makes[9].Id, Name = "Fabia", YearFrom = 2014, YearTo = null },
-                    new Model { MakeId = makes[9].Id, Name = "Kodiaq", YearFrom = 2016, YearTo = null },
                     
                     // Mazda Models
                     new Model { MakeId = makes[10].Id, Name = "3", YearFrom = 2013, YearTo = null },
                     new Model { MakeId = makes[10].Id, Name = "6", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[10].Id, Name = "CX-5", YearFrom = 2012, YearTo = null },
-                    new Model { MakeId = makes[10].Id, Name = "MX-5", YearFrom = 2015, YearTo = null },
                     
                     // Nissan Models
                     new Model { MakeId = makes[11].Id, Name = "Qashqai", YearFrom = 2013, YearTo = null },
                     new Model { MakeId = makes[11].Id, Name = "Juke", YearFrom = 2010, YearTo = null },
                     new Model { MakeId = makes[11].Id, Name = "X-Trail", YearFrom = 2014, YearTo = null },
-                    new Model { MakeId = makes[11].Id, Name = "Micra", YearFrom = 2010, YearTo = null },
                     
                     // Hyundai Models
                     new Model { MakeId = makes[12].Id, Name = "i20", YearFrom = 2014, YearTo = null },
                     new Model { MakeId = makes[12].Id, Name = "i30", YearFrom = 2012, YearTo = null },
                     new Model { MakeId = makes[12].Id, Name = "Tucson", YearFrom = 2015, YearTo = null },
-                    new Model { MakeId = makes[12].Id, Name = "Santa Fe", YearFrom = 2012, YearTo = null },
                     
                     // Kia Models
+                    new Model { MakeId = makes[13].Id, Name = "Rio", YearFrom = 2011, YearTo = null },
                     new Model { MakeId = makes[13].Id, Name = "Sportage", YearFrom = 2015, YearTo = null },
                     new Model { MakeId = makes[13].Id, Name = "Ceed", YearFrom = 2012, YearTo = null },
-                    new Model { MakeId = makes[13].Id, Name = "Rio", YearFrom = 2011, YearTo = null },
-                    new Model { MakeId = makes[13].Id, Name = "Sorento", YearFrom = 2015, YearTo = null }
+                    
+                    // Volvo Models
+                    new Model { MakeId = makes[14].Id, Name = "XC60", YearFrom = 2017, YearTo = null },
+                    new Model { MakeId = makes[14].Id, Name = "XC90", YearFrom = 2015, YearTo = null },
+                    new Model { MakeId = makes[14].Id, Name = "V40", YearFrom = 2012, YearTo = null },
                 };
 
                 await context.Models.AddRangeAsync(models);
                 await context.SaveChangesAsync();
 
+                logger.LogInformation("Makes and models seeded successfully");
+
                 // ==================== SEED VEHICLES ====================
-                var random = new Random(42); // Fixed seed for consistency
-                var cities = new[] { "София", "Пловдив", "Варна", "Бургас", "Русе", "Стара Загора", "Велико Търново", "Плевен" };
-                var colors = new[] { "Черен", "Бял", "Сребрист", "Син", "Червен", "Сив", "Зелен", "Бежов" };
                 var vehicles = new List<Vehicle>();
+                var random = new Random(42);
+                var cities = new[] { "София", "Пловдив", "Варна", "Бургас", "Русе", "Стара Загора", "Плевен" };
 
-                // Create 3-5 vehicles per model
-                foreach (var model in models)
+                // Add 50 vehicles with varied data
+                for (int i = 0; i < 50; i++)
                 {
-                    int vehicleCount = random.Next(3, 6);
+                    var make = makes[random.Next(makes.Count)];
+                    var makeModels = models.Where(m => m.MakeId == make.Id).ToList();
+                    if (makeModels.Count == 0) continue;
 
-                    for (int i = 0; i < vehicleCount; i++)
+                    var model = makeModels[random.Next(makeModels.Count)];
+                    var year = random.Next(2015, 2024);
+                    var mileage = random.Next(10000, 200000);
+
+                    vehicles.Add(new Vehicle
                     {
-                        int year = random.Next(Math.Max(2015, model.YearFrom ?? 2015), 2025);
-                        int mileage = (2025 - year) * random.Next(8000, 25000);
-
-                        var vehicle = new Vehicle
-                        {
-                            MakeId = model.MakeId,
-                            ModelId = model.Id,
-                            Year = year,
-                            Mileage = mileage,
-                            Price = CalculatePrice(model.Make.Name, year, mileage, random),
-                            FuelType = GetRandomFuelType(random),
-                            TransmissionType = random.Next(0, 100) < 70 ? TransmissionType.Automatic : TransmissionType.Manual,
-                            Condition = year >= 2023 ? VehicleCondition.New : VehicleCondition.Used,
-                            BodyStyle = GetBodyStyle(model.Name),
-                            Color = colors[random.Next(colors.Length)],
-                            InteriorColor = colors[random.Next(colors.Length)],
-                            City = cities[random.Next(cities.Length)],
-                            Country = "Bulgaria",
-                            Description = GenerateDescription(model.Make.Name, model.Name, year),
-                            HorsePower = random.Next(90, 350),
-                            EngineSize = Math.Round((decimal)(random.Next(12, 40) / 10.0), 1),
-                            Cylinders = random.Next(3, 9),
-                            Doors = GetDoors(model.Name),
-                            Seats = GetSeats(model.Name)
-                        };
-
-                        vehicles.Add(vehicle);
-                    }
+                        MakeId = make.Id,
+                        ModelId = model.Id,
+                        Year = year,
+                        Mileage = mileage,
+                        Price = CalculatePrice(make.Name, year, mileage, random),
+                        FuelType = GetRandomFuelType(random),
+                        TransmissionType = random.Next(2) == 0 ? TransmissionType.Manual : TransmissionType.Automatic,
+                        BodyStyle = GetBodyStyle(model.Name),
+                        Condition = VehicleCondition.Used,
+                        Color = GetRandomColor(random),
+                        City = cities[random.Next(cities.Length)],
+                        Description = GenerateDescription(make.Name, model.Name, year),
+                        Doors = GetDoors(model.Name),
+                        Seats = GetSeats(model.Name),
+                        EngineSize = GetEngineSize(random),
+                        HorsePower = random.Next(90, 350)
+                    });
                 }
 
                 await context.Vehicles.AddRangeAsync(vehicles);
                 await context.SaveChangesAsync();
 
-                // ==================== SEED VEHICLE IMAGES ====================
-                var vehicleImages = new List<VehicleImage>();
-                foreach (var vehicle in vehicles)
-                {
-                    int imageCount = random.Next(3, 6);
-                    for (int i = 0; i < imageCount; i++)
-                    {
-                        vehicleImages.Add(new VehicleImage
-                        {
-                            VehicleId = vehicle.Id,
-                            ImageUrl = $"https://placehold.co/800x600/dc2626/ffffff?text={vehicle.Make.Name}+{vehicle.Model.Name}",
-                            IsMain = i == 0,
-                            DisplayOrder = i,
-                            Caption = i == 0 ? "Главна снимка" : $"Снимка {i + 1}"
-                        });
-                    }
-                }
+                logger.LogInformation($"Vehicles seeded: {vehicles.Count}");
 
-                await context.VehicleImages.AddRangeAsync(vehicleImages);
-                await context.SaveChangesAsync();
+                // ==================== NO IMAGES - REMOVED ====================
+                // VehicleImages table will remain empty
+                // Frontend should handle missing images gracefully
 
                 logger.LogInformation($"Data seeding completed successfully.");
                 logger.LogInformation($"Created {makes.Count} makes, {models.Count} models, {vehicles.Count} vehicles.");
@@ -251,15 +213,12 @@ namespace TopDriveX.Infrastructure.Data.Initializers
                 _ => 20000
             };
 
-            // Adjust for year
             decimal yearFactor = (year - 2015) / 10.0m;
             basePrice = basePrice * (1 + yearFactor);
 
-            // Adjust for mileage
             decimal mileageFactor = mileage / 200000.0m;
             basePrice = basePrice * (1 - mileageFactor);
 
-            // Add randomness
             basePrice = basePrice * (1 + (decimal)(random.NextDouble() * 0.2 - 0.1));
 
             return Math.Round(basePrice, 0);
@@ -282,8 +241,9 @@ namespace TopDriveX.Infrastructure.Data.Initializers
         {
             if (modelName.Contains("X") || modelName.Contains("Q") || modelName.Contains("Tiguan") ||
                 modelName.Contains("Tucson") || modelName.Contains("RAV") || modelName.Contains("CR-V") ||
-                modelName.Contains("Captur") || modelName.Contains("3008") || modelName.Contains("Qashqai") ||
-                modelName.Contains("Kodiaq") || modelName.Contains("CX") || modelName.Contains("Sportage"))
+                modelName.Contains("Captur") || modelName.Contains("Qashqai") || modelName.Contains("Kodiaq") ||
+                modelName.Contains("CX") || modelName.Contains("Sportage") || modelName.Contains("GLE") ||
+                modelName.Contains("XC"))
                 return BodyStyle.SUV;
 
             if (modelName.Contains("Coupe") || modelName.Contains("Mustang"))
@@ -297,14 +257,25 @@ namespace TopDriveX.Infrastructure.Data.Initializers
 
         private static int GetDoors(string modelName)
         {
-            return modelName.Contains("Coupe") || modelName.Contains("MX-5") ? 2 :
+            return modelName.Contains("Coupe") ? 2 :
                    modelName.Contains("X") || modelName.Contains("Q") || modelName.Contains("SUV") ? 5 : 4;
         }
 
         private static int GetSeats(string modelName)
         {
-            return modelName.Contains("5008") || modelName.Contains("Sorento") ||
-                   modelName.Contains("Land Cruiser") ? 7 : 5;
+            return modelName.Contains("Land Cruiser") || modelName.Contains("XC90") ? 7 : 5;
+        }
+
+        private static decimal GetEngineSize(Random random)
+        {
+            var sizes = new[] { 1.2m, 1.4m, 1.6m, 1.8m, 2.0m, 2.2m, 2.5m, 3.0m };
+            return sizes[random.Next(sizes.Length)];
+        }
+
+        private static string GetRandomColor(Random random)
+        {
+            var colors = new[] { "Черен", "Бял", "Сребрист", "Син", "Червен", "Сив", "Зелен", "Тъмносин" };
+            return colors[random.Next(colors.Length)];
         }
 
         private static string GenerateDescription(string make, string model, int year)
@@ -316,7 +287,9 @@ namespace TopDriveX.Infrastructure.Data.Initializers
                 $"Красив {make} {model} в отлично техническо състояние. Година {year}.",
                 $"Еднособственик! {make} {model} {year}г. Редовна поддръжка, гаражирана.",
                 $"Топ състояние! {make} {model} от {year}г. Внос от Германия.",
-                $"Перфектен {make} {model}! Година {year}. Пълна документация."
+                $"Перфектен {make} {model}! Година {year}. Пълна документация.",
+                $"{make} {model} {year}г. - надеждна кола за дълги пътувания.",
+                $"Икономична и комфортна кола. {make} {model} {year}г."
             };
 
             return descriptions[new Random(make.GetHashCode() + year).Next(descriptions.Length)];
