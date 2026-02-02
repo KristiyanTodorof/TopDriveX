@@ -1,0 +1,279 @@
+﻿@model TopDriveX.Application.Dtos.RegisterDto
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <a asp-controller="Home" asp-action="Index" class="inline-block mb-6">
+                <img src="~/images/logo.png" alt="TopDriveX" class="h-16 mx-auto">
+            </a>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Създайте профил</h2>
+            <p class="text-gray-600">Започнете да търгувате автомобили днес</p>
+        </div>
+
+        <!-- Register Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+
+            <!-- Validation Summary -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-6">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div asp-validation-summary="All" class="text-sm"></div>
+                    </div>
+                </div>
+            }
+
+            <form asp-action="Register" method="post" id="registerForm">
+
+                <!-- User Type Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Тип потребител *</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Private User -->
+                        <label class="relative cursor-pointer">
+                            <input type="radio"
+                                   asp-for="UserType"
+                                   value="Private"
+                                   checked
+                                   class="peer sr-only"
+                                   onchange="toggleDealerFields(false)">
+                            <div class="border-2 border-gray-300 rounded-lg p-4 peer-checked:border-primary peer-checked:bg-red-50 transition">
+                                <div class="text-center">
+                                    <div class="text-3xl mb-2">👤</div>
+                                    <div class="font-semibold text-gray-900">Частно лице</div>
+                                    <div class="text-sm text-gray-600 mt-1">Продавам/купувам лично</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Dealer -->
+                        <label class="relative cursor-pointer">
+                            <input type="radio"
+                                   asp-for="UserType"
+                                   value="Dealer"
+                                   class="peer sr-only"
+                                   onchange="toggleDealerFields(true)">
+                            <div class="border-2 border-gray-300 rounded-lg p-4 peer-checked:border-primary peer-checked:bg-red-50 transition">
+                                <div class="text-center">
+                                    <div class="text-3xl mb-2">🏢</div>
+                                    <div class="font-semibold text-gray-900">Автокъща</div>
+                                    <div class="text-sm text-gray-600 mt-1">Професионален търговец</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <span class="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">1</span>
+                        Информация за акаунта
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Username -->
+                        <div>
+                            <label asp-for="Username" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                            <input asp-for="Username"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                                   placeholder="username123">
+                            <span asp-validation-for="Username" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label asp-for="Email" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                            <input asp-for="Email"
+                                   type="email"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                                   placeholder="email@example.com">
+                            <span asp-validation-for="Email" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <label asp-for="Password" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                            <input asp-for="Password"
+                                   type="password"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                                   placeholder="Минимум 6 символа">
+                            <span asp-validation-for="Password" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div>
+                            <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                            <input asp-for="ConfirmPassword"
+                                   type="password"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                                   placeholder="Повторете паролата">
+                            <span asp-validation-for="ConfirmPassword" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <span class="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">2</span>
+                        Лична информация
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- First Name -->
+                        <div>
+                            <label asp-for="FirstName" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                            <input asp-for="FirstName"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                                   placeholder="Иван">
+                            <span asp-validation-for="FirstName" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div>
+                            <label asp-for="LastName" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                            <input asp-for="LastName"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                                   placeholder="Петров">
+                            <span asp-validation-for="LastName" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                            <input asp-for="PhoneNumber"
+                                   type="tel"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                                   placeholder="+359 888 123 456">
+                            <span asp-validation-for="PhoneNumber" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+                    </div>
+
+                    <!-- City -->
+                    <div class="mt-4">
+                        <label asp-for="City" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                        <input asp-for="City"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                               placeholder="София">
+                        <span asp-validation-for="City" class="text-red-600 text-sm mt-1"></span>
+                    </div>
+                </div>
+
+                <!-- Dealer Information (Hidden by default) -->
+                <div id="dealerFields" class="mb-6 hidden">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <span class="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">3</span>
+                        Информация за автокъщата
+                    </h3>
+
+                    <!-- Dealership Name -->
+                    <div class="mb-4">
+                        <label asp-for="DealershipName" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                        <input asp-for="DealershipName"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                               placeholder="Авто Център София">
+                        <span asp-validation-for="DealershipName" class="text-red-600 text-sm mt-1"></span>
+                    </div>
+
+                    <!-- Dealership Address -->
+                    <div>
+                        <label asp-for="DealershipAddress" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                        <textarea asp-for="DealershipAddress"
+                                  rows="3"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition resize-none"
+                                  placeholder="ул. Цариградско шосе 100, София"></textarea>
+                        <span asp-validation-for="DealershipAddress" class="text-red-600 text-sm mt-1"></span>
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="mb-6">
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input asp-for="AcceptTerms"
+                                   type="checkbox"
+                                   class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label asp-for="AcceptTerms" class="text-gray-700">
+                                Приемам <a href="#" class="text-primary hover:text-secondary">условията за ползване</a> и
+                                <a href="#" class="text-primary hover:text-secondary">политиката за поверителност</a>
+                            </label>
+                            <div>
+                                <span asp-validation-for="AcceptTerms" class="text-red-600 text-sm"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Button -->
+                <button type="submit"
+                        class="w-full bg-primary hover:bg-secondary text-white py-4 rounded-lg font-semibold transition flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                    </svg>
+                    <span>Регистрация</span>
+                </button>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">или</span>
+                </div>
+            </div>
+
+            <!-- Login Link -->
+            <div class="text-center">
+                <p class="text-gray-600">
+                    Вече имате профил?
+                    <a asp-action="Login" class="text-primary hover:text-secondary font-semibold transition">
+                        Влезте тук
+                    </a>
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center mt-6">
+            <a asp-controller="Home" asp-action="Index" class="text-gray-600 hover:text-primary transition inline-flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                </svg>
+                Обратно към началото
+            </a>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Toggle dealer fields based on user type selection
+        function toggleDealerFields(show) {
+            const dealerFields = document.getElementById('dealerFields');
+            if (show) {
+                dealerFields.classList.remove('hidden');
+            } else {
+                dealerFields.classList.add('hidden');
+            }
+        }
+    </script>
+}

@@ -11,6 +11,7 @@ namespace TopDriveX.Application.Contracts
     {
         Task<IEnumerable<VehicleListDto>> GetAllVehiclesAsync();
         Task<VehicleDto?> GetVehicleByIdAsync(Guid id);
+        Task<VehicleDetailsDto?> GetVehicleDetailsAsync(Guid id); // New method
         Task<VehicleDto> CreateVehicleAsync(CreateVehicleDto dto);
         Task<VehicleDto?> UpdateVehicleAsync(Guid id, CreateVehicleDto dto);
         Task<bool> DeleteVehicleAsync(Guid id);

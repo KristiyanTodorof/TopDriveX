@@ -69,7 +69,7 @@ namespace TopDriveX.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+            var vehicle = await _vehicleService.GetVehicleDetailsAsync(id);
 
             if (vehicle == null)
                 return NotFound();

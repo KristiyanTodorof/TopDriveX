@@ -248,5 +248,43 @@ namespace TopDriveX.Application.Services
                 vehicle.Images = allImages.OrderBy(i => i.DisplayOrder).ToList();
             }
         }
+
+        public async Task<VehicleDetailsDto?> GetVehicleDetailsAsync(Guid id)
+        {
+            var vehicle = await _unitOfWork.Vehicles.GetByIdAsync(id);
+
+            if (vehicle == null)
+                return null;
+
+            await LoadVehicleRelatedDataAsync(vehicle);
+
+            return new VehicleDetailsDto
+            {
+                Id = vehicle.Id,
+                MakeName = vehicle.Make?.Name ?? "",
+                ModelName = vehicle.Model?.Name ?? "",
+                Year = vehicle.Year,
+                Mileage = vehicle.Mileage,
+                Price = vehicle.Price,
+                FuelType = vehicle.FuelType.ToString(),
+                TransmissionType = vehicle.TransmissionType.ToString(),
+                BodyStyle = vehicle.BodyStyle?.ToString(),
+                Condition = vehicle.Condition.ToString(),
+                EngineSize = vehicle.EngineSize,
+                HorsePower = vehicle.HorsePower,
+                Cylinders = vehicle.Cylinders,
+                Color = vehicle.Color,
+                InteriorColor = vehicle.InteriorColor,
+                Doors = vehicle.Doors,
+                Seats = vehicle.Seats,
+                City = vehicle.City,
+                Region = vehicle.Region,
+                Country = vehicle.Country,
+                Description = vehicle.Description,
+                VIN = vehicle.VIN,
+                Images = vehicle.Images?.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).ToList() ?? new List<string>(),
+                CreatedAt = vehicle.CreatedAt
+            };
+        }
     }
 }

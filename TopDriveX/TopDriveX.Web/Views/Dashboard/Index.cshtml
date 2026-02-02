@@ -1,0 +1,259 @@
+﻿@model TopDriveX.Domain.Models.User
+
+@{
+    ViewData["Title"] = "Моят профил";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Welcome Header -->
+    <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-lg shadow-xl p-8 mb-8">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Добре дошли, @Model.FirstName! 👋</h1>
+                <p class="text-red-100">
+                    @if (Model.UserType == TopDriveX.Domain.Enums.UserType.Dealer)
+                    {
+                        <span>🏢 Автокъща: @Model.DealershipName</span>
+                    }
+                    else if (Model.UserType == TopDriveX.Domain.Enums.UserType.Admin)
+                    {
+                        <span>👑 Администратор</span>
+                    }
+                    else
+                    {
+                        <span>👤 Частно лице</span>
+                    }
+                </p>
+            </div>
+            <div>
+                <a asp-controller="Vehicles" asp-action="Create"
+                   class="bg-white text-primary hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition inline-flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Добави обява</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- My Ads -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-gray-600 text-sm mb-1">Моите обяви</h3>
+            <p class="text-3xl font-bold text-gray-900">0</p>
+            <a asp-action="MyAds" class="text-sm text-primary hover:text-secondary transition mt-2 inline-block">
+                Виж всички →
+            </a>
+        </div>
+
+        <!-- Active Ads -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="bg-green-100 text-green-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-gray-600 text-sm mb-1">Активни</h3>
+            <p class="text-3xl font-bold text-gray-900">0</p>
+            <p class="text-sm text-gray-500 mt-2">Одобрени обяви</p>
+        </div>
+
+        <!-- Favorites -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="bg-red-100 text-red-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-gray-600 text-sm mb-1">Любими</h3>
+            <p class="text-3xl font-bold text-gray-900">0</p>
+            <a asp-action="Favorites" class="text-sm text-primary hover:text-secondary transition mt-2 inline-block">
+                Виж любими →
+            </a>
+        </div>
+
+        <!-- Views -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="bg-purple-100 text-purple-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-gray-600 text-sm mb-1">Общо прегледи</h3>
+            <p class="text-3xl font-bold text-gray-900">0</p>
+            <p class="text-sm text-gray-500 mt-2">На всички обяви</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Column - Recent Activity -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Recent Ads -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">Последни обяви</h2>
+                    <a asp-action="MyAds" class="text-primary hover:text-secondary text-sm font-semibold transition">
+                        Виж всички
+                    </a>
+                </div>
+
+                <!-- Empty State -->
+                <div class="text-center py-12">
+                    <div class="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Все още нямате обяви</h3>
+                    <p class="text-gray-600 mb-6">Започнете да продавате автомобили днес!</p>
+                    <a asp-controller="Vehicles" asp-action="Create"
+                       class="inline-flex items-center bg-primary hover:bg-secondary text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        Създай първата си обява
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Бързи действия</h2>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <a asp-controller="Vehicles" asp-action="Create"
+                       class="border-2 border-gray-200 hover:border-primary rounded-lg p-4 text-center transition group">
+                        <div class="bg-gray-100 group-hover:bg-red-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 transition">
+                            <svg class="w-6 h-6 text-gray-600 group-hover:text-primary transition" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900">Нова обява</h3>
+                    </a>
+
+                    <a asp-action="Profile"
+                       class="border-2 border-gray-200 hover:border-primary rounded-lg p-4 text-center transition group">
+                        <div class="bg-gray-100 group-hover:bg-red-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 transition">
+                            <svg class="w-6 h-6 text-gray-600 group-hover:text-primary transition" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900">Редактирай профил</h3>
+                    </a>
+
+                    <a asp-action="Favorites"
+                       class="border-2 border-gray-200 hover:border-primary rounded-lg p-4 text-center transition group">
+                        <div class="bg-gray-100 group-hover:bg-red-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 transition">
+                            <svg class="w-6 h-6 text-gray-600 group-hover:text-primary transition" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900">Любими обяви</h3>
+                    </a>
+
+                    <a asp-action="Settings"
+                       class="border-2 border-gray-200 hover:border-primary rounded-lg p-4 text-center transition group">
+                        <div class="bg-gray-100 group-hover:bg-red-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 transition">
+                            <svg class="w-6 h-6 text-gray-600 group-hover:text-primary transition" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900">Настройки</h3>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column - Profile & Info -->
+        <div class="space-y-6">
+
+            <!-- Profile Card -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="text-center mb-6">
+                    <div class="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4 text-white text-3xl font-bold">
+                        @Model.FirstName.Substring(0, 1)@Model.LastName.Substring(0, 1)
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">@Model.FirstName @Model.LastName</h3>
+                    <p class="text-gray-600">@Model.Email</p>
+                </div>
+
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <svg class="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                        </svg>
+                        @Model.PhoneNumber
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.City))
+                    {
+                        <div class="flex items-center text-gray-700">
+                            <svg class="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                            </svg>
+                            @Model.City, България
+                        </div>
+                    }
+
+                    <div class="flex items-center text-gray-700">
+                        <svg class="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                        </svg>
+                        Член от @Model.CreatedAt.ToString("MMMM yyyy")
+                    </div>
+                </div>
+
+                <a asp-action="Profile"
+                   class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-900 text-center py-3 rounded-lg font-semibold transition mt-6">
+                    Редактирай профил
+                </a>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
+                <div class="flex items-start mb-4">
+                    <div class="bg-blue-500 text-white p-2 rounded-full mr-3">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-blue-900 mb-2">💡 Съвети за успех</h3>
+                        <ul class="text-sm text-blue-800 space-y-2">
+                            <li>✓ Добавете качествени снимки</li>
+                            <li>✓ Опишете детайлно автомобила</li>
+                            <li>✓ Отговаряйте бързо на запитвания</li>
+                            <li>✓ Актуализирайте обявите редовно</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

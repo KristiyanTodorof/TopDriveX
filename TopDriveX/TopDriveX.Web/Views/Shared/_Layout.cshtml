@@ -20,20 +20,6 @@
     </script>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
- @*    <!-- Top Bar -->
-    <div class="bg-gray-900 text-white text-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-between">
-            <div class="flex space-x-6">
-                <span>📞 +359 888 123 456</span>
-                <span>✉️ info@topdrivex.bg</span>
-            </div>
-            <div class="flex space-x-4">
-                <a href="#" class="hover:text-red-500">Вход</a>
-                <span>|</span>
-                <a href="#" class="hover:text-red-500">Регистрация</a>
-            </div>
-        </div>
-    </div> *@
 
     <!-- Navigation -->
     <nav class="shadow-lg sticky top-0 z-50" style="background-color: #FCFCFC;">
@@ -65,20 +51,101 @@
                     </a>
                 </div>
 
-                <!-- Add Listing Button - Right -->
-                <div class="flex items-center">
-                    <a href="#" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
-                        + Добави обява
-                    </a>
+                <!-- Right Side - Auth or Add Listing -->
+                <div class="flex items-center space-x-4">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <!-- User Menu -->
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 text-gray-700 hover:text-red-600 font-medium transition">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>@User.Identity.Name</span>
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2">
+                                <a asp-controller="Dashboard" asp-action="Index" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    📊 Моят профил
+                                </a>
+                                <a asp-controller="Dashboard" asp-action="MyAds" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    📝 Моите обяви
+                                </a>
+                                <a asp-controller="Dashboard" asp-action="Favorites" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    ❤️ Любими
+                                </a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <hr class="my-2">
+                                    <a asp-controller="Admin" asp-action="Index" class="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold transition">
+                                        👑 Админ панел
+                                    </a>
+                                }
+                                <hr class="my-2">
+                                <a asp-controller="Dashboard" asp-action="Settings" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    ⚙️ Настройки
+                                </a>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="block">
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                        🚪 Изход
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <a asp-controller="Vehicles" asp-action="Create" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
+                            + Добави обява
+                        </a>
+                    }
+                    else
+                    {
+                        <!-- Login/Register -->
+                        <a asp-controller="Account" asp-action="Login" class="text-gray-700 hover:text-red-600 font-medium transition">
+                            Вход
+                        </a>
+                        <a asp-controller="Account" asp-action="Register" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
+                            Регистрация
+                        </a>
+                    }
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- TempData Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>@TempData["Success"]</span>
+            </div>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>@TempData["Error"]</span>
+            </div>
+        </div>
+    }
+
     <!-- Main Content -->
     <main class="flex-grow">
         @RenderBody()
     </main>
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-white mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -155,5 +222,9 @@
             </div>
         </div>
     </footer>
+
+    <!-- ⚠️ IMPORTANT: Scripts section MUST be here -->
+    @RenderSection("Scripts", required: false)
+
 </body>
 </html>

@@ -1,0 +1,136 @@
+﻿@model TopDriveX.Application.Dtos.LoginDto
+
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <a asp-controller="Home" asp-action="Index" class="inline-block mb-6">
+                <img src="~/images/logo.png" alt="TopDriveX" class="h-16 mx-auto">
+            </a>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Добре дошли отново!</h2>
+            <p class="text-gray-600">Влезте в профила си</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+
+            <!-- Validation Summary -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-6">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div asp-validation-summary="All" class="text-sm"></div>
+                    </div>
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                <!-- Username or Email -->
+                <div class="mb-6">
+                    <label asp-for="UsernameOrEmail" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <input asp-for="UsernameOrEmail"
+                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                               placeholder="Потребителско име или имейл"
+                               autocomplete="username">
+                    </div>
+                    <span asp-validation-for="UsernameOrEmail" class="text-red-600 text-sm mt-1"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-6">
+                    <label asp-for="Password" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <input asp-for="Password"
+                               type="password"
+                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                               placeholder="Въведете парола"
+                               autocomplete="current-password">
+                    </div>
+                    <span asp-validation-for="Password" class="text-red-600 text-sm mt-1"></span>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <input asp-for="RememberMe"
+                               type="checkbox"
+                               class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <label asp-for="RememberMe" class="ml-2 block text-sm text-gray-700">
+                            Запомни ме
+                        </label>
+                    </div>
+                    <a href="#" class="text-sm text-primary hover:text-secondary transition">
+                        Забравена парола?
+                    </a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit"
+                        class="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Вход</span>
+                </button>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">или</span>
+                </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="text-center">
+                <p class="text-gray-600">
+                    Нямате профил?
+                    <a asp-action="Register" class="text-primary hover:text-secondary font-semibold transition">
+                        Регистрирайте се
+                    </a>
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center mt-6">
+            <a asp-controller="Home" asp-action="Index" class="text-gray-600 hover:text-primary transition inline-flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                </svg>
+                Обратно към началото
+            </a>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,272 @@
+﻿@model TopDriveX.Application.Dtos.VehicleDetailsDto
+
+@{
+    ViewData["Title"] = $"{Model.MakeName} {Model.ModelName} {Model.Year}";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="mb-6">
+        <ol class="flex items-center space-x-2 text-sm text-gray-600">
+            <li><a asp-controller="Home" asp-action="Index" class="hover:text-primary transition">Начало</a></li>
+            <li class="text-gray-400">→</li>
+            <li><a asp-controller="Vehicles" asp-action="Index" class="hover:text-primary transition">Обяви</a></li>
+            <li class="text-gray-400">→</li>
+            <li class="text-gray-900 font-medium">@Model.MakeName @Model.ModelName</li>
+        </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Column - Images & Details -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Image Gallery -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                @if (Model.Images != null && Model.Images.Any())
+                {
+                    <!-- Main Image -->
+                    <div class="relative bg-gray-100 aspect-video">
+                        <img id="mainImage"
+                             src="@Model.Images.First()"
+                             alt="@Model.MakeName @Model.ModelName"
+                             class="w-full h-full object-cover" />
+
+                        <!-- No Image Badge -->
+                        <div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            @Model.Year г.
+                        </div>
+                    </div>
+
+                    <!-- Thumbnails -->
+                    @if (Model.Images.Count > 1)
+                    {
+                        <div class="p-4 grid grid-cols-4 sm:grid-cols-6 gap-2">
+                            @foreach (var image in Model.Images)
+                            {
+                                <img src="@image"
+                                     alt="Thumbnail"
+                                     class="w-full aspect-square object-cover rounded cursor-pointer hover:opacity-75 transition border-2 border-transparent hover:border-primary"
+                                     onclick="document.getElementById('mainImage').src='@image'" />
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <!-- No Image Placeholder -->
+                    <div class="aspect-video bg-gray-200 flex items-center justify-center">
+                        <div class="text-center text-gray-500">
+                            <div class="text-6xl mb-2">🚗</div>
+                            <p class="text-lg font-medium">Няма налични снимки</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Vehicle Title -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    @Model.MakeName @Model.ModelName @Model.Year
+                </h1>
+                <div class="flex items-center space-x-4 text-sm text-gray-600">
+                    <span class="flex items-center">
+                        <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                        </svg>
+                        @Model.City@(!string.IsNullOrEmpty(Model.Region) ? $", {Model.Region}" : "")
+                    </span>
+                    <span class="flex items-center">
+                        <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                        </svg>
+                        Публикувана: @Model.CreatedAt.ToString("dd.MM.yyyy")
+                    </span>
+                </div>
+            </div>
+
+            <!-- Technical Specifications -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Технически характеристики</h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Year -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="text-gray-600 text-sm mb-1">Година</div>
+                        <div class="text-lg font-semibold text-gray-900">@Model.Year</div>
+                    </div>
+
+                    <!-- Mileage -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="text-gray-600 text-sm mb-1">Пробег</div>
+                        <div class="text-lg font-semibold text-gray-900">@Model.Mileage.ToString("N0") км</div>
+                    </div>
+
+                    <!-- Fuel Type -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="text-gray-600 text-sm mb-1">Гориво</div>
+                        <div class="text-lg font-semibold text-gray-900">@Model.FuelType</div>
+                    </div>
+
+                    <!-- Transmission -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="text-gray-600 text-sm mb-1">Скоростна кутия</div>
+                        <div class="text-lg font-semibold text-gray-900">@Model.TransmissionType</div>
+                    </div>
+
+                    <!-- Body Style -->
+                    @if (!string.IsNullOrEmpty(Model.BodyStyle))
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="text-gray-600 text-sm mb-1">Тип купе</div>
+                            <div class="text-lg font-semibold text-gray-900">@Model.BodyStyle</div>
+                        </div>
+                    }
+
+                    <!-- Condition -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="text-gray-600 text-sm mb-1">Състояние</div>
+                        <div class="text-lg font-semibold text-gray-900">@Model.Condition</div>
+                    </div>
+
+                    <!-- Engine Size -->
+                    @if (Model.EngineSize.HasValue)
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="text-gray-600 text-sm mb-1">Обем на двигателя</div>
+                            <div class="text-lg font-semibold text-gray-900">@Model.EngineSize л</div>
+                        </div>
+                    }
+
+                    <!-- Horse Power -->
+                    @if (Model.HorsePower.HasValue)
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="text-gray-600 text-sm mb-1">Мощност</div>
+                            <div class="text-lg font-semibold text-gray-900">@Model.HorsePower к.с.</div>
+                        </div>
+                    }
+
+                    <!-- Color -->
+                    @if (!string.IsNullOrEmpty(Model.Color))
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="text-gray-600 text-sm mb-1">Цвят</div>
+                            <div class="text-lg font-semibold text-gray-900">@Model.Color</div>
+                        </div>
+                    }
+
+                    <!-- Doors -->
+                    @if (Model.Doors.HasValue)
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="text-gray-600 text-sm mb-1">Врати</div>
+                            <div class="text-lg font-semibold text-gray-900">@Model.Doors</div>
+                        </div>
+                    }
+
+                    <!-- Seats -->
+                    @if (Model.Seats.HasValue)
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="text-gray-600 text-sm mb-1">Места</div>
+                            <div class="text-lg font-semibold text-gray-900">@Model.Seats</div>
+                        </div>
+                    }
+
+                    <!-- VIN -->
+                    @if (!string.IsNullOrEmpty(Model.VIN))
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4 col-span-2">
+                            <div class="text-gray-600 text-sm mb-1">VIN номер</div>
+                            <div class="text-lg font-semibold text-gray-900 font-mono">@Model.VIN</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Description -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Описание</h2>
+                    <p class="text-gray-700 leading-relaxed whitespace-pre-line">@Model.Description</p>
+                </div>
+            }
+
+        </div>
+
+        <!-- Right Column - Price & Contact -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+
+                <!-- Price -->
+                <div class="mb-6">
+                    <div class="text-gray-600 text-sm mb-1">Цена</div>
+                    <div class="text-4xl font-bold text-primary mb-2">
+                        @Model.Price.ToString("N0") <span class="text-xl">лв</span>
+                    </div>
+                    <div class="text-sm text-gray-500">~ @((Model.Price / 1.96m).ToString("N0")) EUR</div>
+                </div>
+
+                <!-- Contact Buttons -->
+                <div class="space-y-3">
+                    <button class="w-full bg-primary hover:bg-secondary text-white py-4 rounded-lg font-semibold transition flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                        </svg>
+                        <span>Покажи телефон</span>
+                    </button>
+
+                    <button class="w-full bg-white border-2 border-primary text-primary hover:bg-red-50 py-4 rounded-lg font-semibold transition flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                        </svg>
+                        <span>Изпрати съобщение</span>
+                    </button>
+
+                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold transition flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>Запази в любими</span>
+                    </button>
+                </div>
+
+                <!-- Safety Tips -->
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <h3 class="font-semibold text-gray-900 mb-2">⚠️ Съвети за безопасност</h3>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>• Срещнете се на публично място</li>
+                        <li>• Проверете автомобила преди покупка</li>
+                        <li>• Не плащайте предварително</li>
+                        <li>• Проверете документите</li>
+                    </ul>
+                </div>
+
+                <!-- Report -->
+                <div class="mt-6">
+                    <button class="text-sm text-gray-500 hover:text-primary transition">
+                        🚩 Докладвай обявата
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Similar Vehicles Section -->
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Подобни обяви</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Placeholder for similar vehicles -->
+            <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-500">
+                <div class="text-4xl mb-2">🚗</div>
+                <p>Скоро</p>
+            </div>
+        </div>
+    </div>
+
+</div>

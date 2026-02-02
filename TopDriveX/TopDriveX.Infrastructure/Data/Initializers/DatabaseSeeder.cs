@@ -185,7 +185,7 @@ namespace TopDriveX.Infrastructure.Data.Initializers
                 {
                     users.Add(new User
                     {
-                        Username = $"user{i + 1}",
+                        UserName = $"user{i + 1}",
                         Email = $"user{i + 1}@topdrivex.com",
                         PasswordHash = "dummy_hash_" + i, // In production, use proper hashing
                         FirstName = $"User",
@@ -193,8 +193,8 @@ namespace TopDriveX.Infrastructure.Data.Initializers
                         PhoneNumber = $"08{random.Next(10000000, 99999999)}",
                         UserType = i == 0 ? UserType.Admin : (i < 3 ? UserType.Dealer : UserType.Private),
                         City = cities[random.Next(cities.Length)],
-                        IsEmailVerified = true,
-                        IsPhoneVerified = true,
+                        EmailConfirmed = true,
+                        PhoneNumberConfirmed = true,
                         IsActive = true
                     });
                 }
