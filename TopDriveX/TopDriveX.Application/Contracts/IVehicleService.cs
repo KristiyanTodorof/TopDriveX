@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopDriveX.Application.Dtos;
+using TopDriveX.Domain.Enums;
 
 namespace TopDriveX.Application.Contracts
 {
@@ -11,12 +12,10 @@ namespace TopDriveX.Application.Contracts
     {
         Task<IEnumerable<VehicleListDto>> GetAllVehiclesAsync();
         Task<VehicleDto?> GetVehicleByIdAsync(Guid id);
-        Task<VehicleDetailsDto?> GetVehicleDetailsAsync(Guid id); // New method
         Task<VehicleDto> CreateVehicleAsync(CreateVehicleDto dto);
         Task<VehicleDto?> UpdateVehicleAsync(Guid id, CreateVehicleDto dto);
         Task<bool> DeleteVehicleAsync(Guid id);
 
-        // Search & Filter
         Task<IEnumerable<VehicleListDto>> SearchVehiclesAsync(
             Guid? makeId = null,
             Guid? modelId = null,
@@ -30,5 +29,10 @@ namespace TopDriveX.Application.Contracts
 
         Task<IEnumerable<VehicleListDto>> GetFeaturedVehiclesAsync(int count = 6);
         Task<IEnumerable<VehicleListDto>> GetLatestVehiclesAsync(int count = 10);
+
+        /// <summary>
+        /// Creates Vehicle + Advertisement + saves images. Returns the new Advertisement ID.
+        /// </summary>
+        Task<Guid> CreateAdvertisementAsync(CreateVehicleDto dto, Guid userId);
     }
 }

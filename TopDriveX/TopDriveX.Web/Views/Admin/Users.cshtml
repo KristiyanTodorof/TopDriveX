@@ -1,0 +1,309 @@
+﻿@model IEnumerable<TopDriveX.Domain.Models.User>
+
+@{
+    ViewData["Title"] = "Управление на потребители";
+    var totalUsers = ViewBag.TotalUsers;
+    var currentPage = ViewBag.CurrentPage;
+    var pageSize = ViewBag.PageSize;
+    var totalPages = (int)Math.Ceiling((double)totalUsers / pageSize);
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Управление на потребители</h1>
+            <p class="text-gray-600">Общо: @totalUsers потребители</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Index"
+           class="bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition inline-flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Обратно</span>
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Общо</p>
+                    <p class="text-2xl font-bold text-gray-900">@totalUsers</p>
+                </div>
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Активни</p>
+                    <p class="text-2xl font-bold text-green-600">@Model.Count(u => u.IsActive)</p>
+                </div>
+                <div class="bg-green-100 text-green-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Автокъщи</p>
+                    <p class="text-2xl font-bold text-purple-600">@Model.Count(u => u.UserType == TopDriveX.Domain.Enums.UserType.Dealer)</p>
+                </div>
+                <div class="bg-purple-100 text-purple-600 p-3 rounded-full">
+                    <span class="text-xl">🏢</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Частни</p>
+                    <p class="text-2xl font-bold text-blue-600">@Model.Count(u => u.UserType == TopDriveX.Domain.Enums.UserType.Private)</p>
+                </div>
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                    <span class="text-xl">👤</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="flex flex-wrap gap-4">
+            <div class="flex-1 min-w-[300px]">
+                <input type="text"
+                       id="searchInput"
+                       placeholder="🔍 Търси по име, имейл или телефон..."
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+            </div>
+            <select class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">Всички типове</option>
+                <option value="Admin">Администратор</option>
+                <option value="Dealer">Автокъща</option>
+                <option value="Private">Частно лице</option>
+            </select>
+            <select class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">Всички статуси</option>
+                <option value="active">Активни</option>
+                <option value="inactive">Неактивни</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Потребител
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Тип
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Контакт
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Местоположение
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Статус
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Регистриран
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Действия
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach (var user in Model)
+                    {
+                        <tr class="hover:bg-gray-50 transition">
+                            <!-- User Info -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold">
+                                        @user.FirstName.Substring(0, 1)@user.LastName.Substring(0, 1)
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            @user.FirstName @user.LastName
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            @@@user.UserName
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- User Type -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if (user.UserType == TopDriveX.Domain.Enums.UserType.Admin)
+                                {
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        👑 Admin
+                                    </span>
+                                }
+                                else if (user.UserType == TopDriveX.Domain.Enums.UserType.Dealer)
+                                {
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                        🏢 Dealer
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        👤 Private
+                                    </span>
+                                }
+                            </td>
+
+                            <!-- Contact -->
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <div class="text-gray-900">@user.Email</div>
+                                <div class="text-gray-500">@user.PhoneNumber</div>
+                            </td>
+
+                            <!-- Location -->
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                @if (!string.IsNullOrEmpty(user.City))
+                                {
+                                    <span>📍 @user.City</span>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-400">-</span>
+                                }
+                            </td>
+
+                            <!-- Status -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if (user.IsActive)
+                                {
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        ✓ Активен
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        ✗ Неактивен
+                                    </span>
+                                }
+                            </td>
+
+                            <!-- Registration Date -->
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                @user.CreatedAt.ToString("dd.MM.yyyy")
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <a asp-action="UserDetails" asp-route-id="@user.Id"
+                                       class="text-blue-600 hover:text-blue-900 transition"
+                                       title="Детайли">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </a>
+
+                                    <form asp-action="ToggleUserStatus" asp-route-id="@user.Id" method="post" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="@(user.IsActive ? "text-red-600 hover:text-red-900" : "text-green-600 hover:text-green-900") transition"
+                                                title="@(user.IsActive ? "Деактивирай" : "Активирай")">
+                                            @if (user.IsActive)
+                                            {
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            }
+                                            else
+                                            {
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            }
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1)
+        {
+            <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
+                <div class="text-sm text-gray-700">
+                    Показани <span class="font-medium">@((currentPage - 1) * pageSize + 1)</span> до
+                    <span class="font-medium">@Math.Min(currentPage * pageSize, totalUsers)</span> от
+                    <span class="font-medium">@totalUsers</span> резултата
+                </div>
+                <div class="flex space-x-2">
+                    @if (currentPage > 1)
+                    {
+                        <a asp-action="Users" asp-route-page="@(currentPage - 1)"
+                           class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">
+                            Предишна
+                        </a>
+                    }
+
+                    @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+                    {
+                        <a asp-action="Users" asp-route-page="@i"
+                           class="px-4 py-2 border @(i == currentPage ? "border-primary bg-primary text-white" : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50") rounded-lg text-sm font-medium transition">
+                            @i
+                        </a>
+                    }
+
+                    @if (currentPage < totalPages)
+                    {
+                        <a asp-action="Users" asp-route-page="@(currentPage + 1)"
+                           class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">
+                            Следваща
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        // Simple client-side search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+}

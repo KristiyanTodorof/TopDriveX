@@ -55,59 +55,71 @@
                 <div class="flex items-center space-x-4">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <!-- User Menu -->
-                        <div class="relative group">
-                            <button class="flex items-center space-x-2 text-gray-700 hover:text-red-600 font-medium transition">
+                        <!-- User Menu (with JavaScript dropdown) -->
+                        <div class="relative">
+                            <button id="userMenuButton"
+                                    class="flex items-center space-x-2 text-gray-700 hover:text-red-600 font-medium transition focus:outline-none">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                                 </svg>
                                 <span>@User.Identity.Name</span>
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-4 h-4 transition-transform" id="userMenuIcon" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                                 </svg>
                             </button>
 
-                            <!-- Dropdown Menu -->
-                            <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2">
-                                <a asp-controller="Dashboard" asp-action="Index" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    📊 Моят профил
+                            <!-- Dropdown Menu (initially hidden) -->
+                            <div id="userMenuDropdown"
+                                 class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-200">
+                                <a asp-controller="Dashboard" asp-action="Index"
+                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    <span class="mr-2">📊</span> Моят профил
                                 </a>
-                                <a asp-controller="Dashboard" asp-action="MyAds" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    📝 Моите обяви
+                                <a asp-controller="Dashboard" asp-action="MyAds"
+                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    <span class="mr-2">📝</span> Моите обяви
                                 </a>
-                                <a asp-controller="Dashboard" asp-action="Favorites" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    ❤️ Любими
+                                <a asp-controller="Dashboard" asp-action="Favorites"
+                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    <span class="mr-2">❤️</span> Любими
                                 </a>
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <hr class="my-2">
-                                    <a asp-controller="Admin" asp-action="Index" class="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold transition">
-                                        👑 Админ панел
+                                    <hr class="my-2 border-gray-200">
+                                    <a asp-controller="Admin" asp-action="Index"
+                                       class="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold transition">
+                                        <span class="mr-2">👑</span> Админ панел
                                     </a>
                                 }
-                                <hr class="my-2">
-                                <a asp-controller="Dashboard" asp-action="Settings" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    ⚙️ Настройки
+                                <hr class="my-2 border-gray-200">
+                                <a asp-controller="Dashboard" asp-action="Settings"
+                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    <span class="mr-2">⚙️</span> Настройки
                                 </a>
                                 <form asp-controller="Account" asp-action="Logout" method="post" class="block">
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                        🚪 Изход
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit"
+                                            class="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                        <span class="mr-2">🚪</span> Изход
                                     </button>
                                 </form>
                             </div>
                         </div>
 
-                        <a asp-controller="Vehicles" asp-action="Create" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
+                        <a asp-controller="Vehicles" asp-action="Create"
+                           class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
                             + Добави обява
                         </a>
                     }
                     else
                     {
                         <!-- Login/Register -->
-                        <a asp-controller="Account" asp-action="Login" class="text-gray-700 hover:text-red-600 font-medium transition">
+                        <a asp-controller="Account" asp-action="Login"
+                           class="text-gray-700 hover:text-red-600 font-medium transition">
                             Вход
                         </a>
-                        <a asp-controller="Account" asp-action="Register" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
+                        <a asp-controller="Account" asp-action="Register"
+                           class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
                             Регистрация
                         </a>
                     }
@@ -149,48 +161,27 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Main Footer Content -->
             <div class="py-10">
-                <!-- Logo and Description - Centered -->
                 <div class="text-center mb-8">
                     <p class="text-gray-400 text-sm max-w-xl mx-auto">
                         Вашият надежден партньор за намиране и продажба на автомобили в България.
                     </p>
                 </div>
 
-                <!-- Navigation Links - Centered -->
                 <div class="flex justify-center space-x-6 mb-8 flex-wrap text-sm">
-                    <a asp-controller="Home" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">
-                        Начало
-                    </a>
-                    <a asp-controller="Vehicles" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">
-                        Обяви
-                    </a>
-                    <a asp-controller="Makes" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">
-                        Марки
-                    </a>
-                    <a asp-controller="Home" asp-action="About" class="text-gray-400 hover:text-red-500 transition">
-                        За нас
-                    </a>
-                    <a asp-controller="Home" asp-action="Contact" class="text-gray-400 hover:text-red-500 transition">
-                        Контакти
-                    </a>
+                    <a asp-controller="Home" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">Начало</a>
+                    <a asp-controller="Vehicles" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">Обяви</a>
+                    <a asp-controller="Makes" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">Марки</a>
+                    <a asp-controller="Home" asp-action="About" class="text-gray-400 hover:text-red-500 transition">За нас</a>
+                    <a asp-controller="Home" asp-action="Contact" class="text-gray-400 hover:text-red-500 transition">Контакти</a>
                 </div>
 
-                <!-- Contact Info - Inline -->
                 <div class="flex justify-center space-x-8 mb-6 flex-wrap text-sm text-gray-400">
-                    <span class="flex items-center">
-                        <span class="mr-2">📍</span> Тутракан, България
-                    </span>
-                    <span class="flex items-center">
-                        <span class="mr-2">📞</span> +359 888 916 060
-                    </span>
-                    <span class="flex items-center">
-                        <span class="mr-2">✉️</span> info@topdrivex.bg
-                    </span>
+                    <span class="flex items-center"><span class="mr-2">📍</span> Тутракан, България</span>
+                    <span class="flex items-center"><span class="mr-2">📞</span> +359 888 916 060</span>
+                    <span class="flex items-center"><span class="mr-2">✉️</span> info@topdrivex.bg</span>
                 </div>
 
-                <!-- Social Media - Centered -->
                 <div class="flex justify-center space-x-3">
                     <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
                         <span class="text-lg">📘</span>
@@ -207,14 +198,13 @@
                 </div>
             </div>
 
-            <!-- Bottom Bar -->
             <div class="border-t border-gray-800 py-4">
                 <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
                     <p class="mb-2 md:mb-0">
                         &copy; 2026 <span class="text-red-500 font-semibold">TopDriveX</span>. Всички права запазени.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="hover:text-red-500 transition">Поверителност</a>
+                        <a asp-controller="Home" asp-action="Privacy" class="hover:text-red-500 transition">Поверителност</a>
                         <a href="#" class="hover:text-red-500 transition">Условия</a>
                         <a href="#" class="hover:text-red-500 transition">Cookies</a>
                     </div>
@@ -223,7 +213,44 @@
         </div>
     </footer>
 
-    <!-- ⚠️ IMPORTANT: Scripts section MUST be here -->
+    <!-- User Menu Dropdown JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const button = document.getElementById('userMenuButton');
+            const dropdown = document.getElementById('userMenuDropdown');
+            const icon = document.getElementById('userMenuIcon');
+
+            if (button && dropdown) {
+                // Toggle dropdown on button click
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isHidden = dropdown.classList.contains('hidden');
+
+                    if (isHidden) {
+                        dropdown.classList.remove('hidden');
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        dropdown.classList.add('hidden');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                // Prevent dropdown from closing when clicking inside it
+                dropdown.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+        });
+    </script>
+
     @RenderSection("Scripts", required: false)
 
 </body>

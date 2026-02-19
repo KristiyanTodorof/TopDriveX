@@ -1,0 +1,514 @@
+﻿@model TopDriveX.Application.Dtos.CreateAdvertisementDto
+@{
+    ViewData["Title"] = "Публикувай обява";
+}
+
+<div class="bg-gray-50 min-h-screen py-10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-900">Публикувай обява</h1>
+            <p class="text-gray-500 mt-2">Попълни информацията за своя автомобил</p>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="flex items-center justify-center mb-10 select-none">
+            @foreach (var s in new[] {
+            new { N = 1, Label = "Автомобил" },
+            new { N = 2, Label = "Екстри" },
+            new { N = 3, Label = "Обява" },
+            new { N = 4, Label = "Снимки" }
+            })
+            {
+                <div class="flex items-center">
+                    <div class="flex flex-col items-center">
+                        <div id="si-@s.N" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 @(s.N == 1 ? "bg-primary text-white shadow-lg" : "bg-gray-200 text-gray-500")">
+                            @s.N
+                        </div>
+                        <span id="sl-@s.N" class="text-xs mt-1 font-medium @(s.N == 1 ? "text-primary" : "text-gray-400")">@s.Label</span>
+                    </div>
+                    @if (s.N < 4)
+                    {
+                        <div id="sline-@s.N" class="w-16 sm:w-24 h-1 mx-2 mb-4 rounded transition-all duration-500 @(s.N == 0 ? "bg-primary" : "bg-gray-200")"></div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Form -->
+        <form asp-action="Create" method="post" enctype="multipart/form-data" id="adForm">
+            @Html.AntiForgeryToken()
+
+            <!-- ===== STEP 1: VEHICLE ===== -->
+            <div id="step-1" class="step-panel">
+                <div class="bg-white rounded-xl shadow-md p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-100">🚗 Информация за автомобила</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <!-- Make -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Марка *</label>
+                            <select asp-for="MakeId" id="makeSelect"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Изберете марка —</option>
+                                @foreach (var item in (ViewBag.Makes as Microsoft.AspNetCore.Mvc.Rendering.SelectList)!)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                            <span asp-validation-for="MakeId" class="text-red-500 text-xs mt-1 block"></span>
+                        </div>
+
+                        <!-- Model -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Модел *</label>
+                            <select asp-for="ModelId" id="modelSelect"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Първо изберете марка —</option>
+                            </select>
+                            <span asp-validation-for="ModelId" class="text-red-500 text-xs mt-1 block"></span>
+                        </div>
+
+                        <!-- Vehicle Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Тип</label>
+                            <select asp-for="VehicleTypeId"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Изберете тип —</option>
+                                @foreach (var item in (ViewBag.VehicleTypes as Microsoft.AspNetCore.Mvc.Rendering.SelectList)!)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Body Style -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Каросерия</label>
+                            <select asp-for="BodyStyle" asp-items="ViewBag.BodyStyles"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Изберете —</option>
+                            </select>
+                        </div>
+
+                        <!-- Year -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Година *</label>
+                            <input asp-for="Year" type="number" min="1900" max="2025" placeholder="2020"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                            <span asp-validation-for="Year" class="text-red-500 text-xs mt-1 block"></span>
+                        </div>
+
+                        <!-- Mileage -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Пробег (км) *</label>
+                            <input asp-for="Mileage" type="number" min="0" placeholder="85000"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                            <span asp-validation-for="Mileage" class="text-red-500 text-xs mt-1 block"></span>
+                        </div>
+
+                        <!-- Fuel Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Гориво *</label>
+                            <select asp-for="FuelType" asp-items="ViewBag.FuelTypes"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Изберете —</option>
+                            </select>
+                            <span asp-validation-for="FuelType" class="text-red-500 text-xs mt-1 block"></span>
+                        </div>
+
+                        <!-- Transmission -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Скоростна кутия *</label>
+                            <select asp-for="TransmissionType" asp-items="ViewBag.TransmissionTypes"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Изберете —</option>
+                            </select>
+                            <span asp-validation-for="TransmissionType" class="text-red-500 text-xs mt-1 block"></span>
+                        </div>
+
+                        <!-- Horse Power -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Мощност (к.с.)</label>
+                            <input asp-for="HorsePower" type="number" min="1" placeholder="150"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                        </div>
+
+                        <!-- Engine Size -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Кубатура (л)</label>
+                            <input asp-for="EngineSize" type="number" step="0.1" min="0" placeholder="2.0"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                        </div>
+
+                        <!-- Color -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Цвят</label>
+                            <select asp-for="Color" asp-items="ViewBag.Colors"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Изберете —</option>
+                            </select>
+                        </div>
+
+                        <!-- Doors -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Врати</label>
+                            <select asp-for="Doors"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <option value="">— Изберете —</option>
+                                <option value="2">2 врати</option>
+                                <option value="3">3 врати</option>
+                                <option value="4">4 врати</option>
+                                <option value="5">5 врати</option>
+                            </select>
+                        </div>
+
+                        <!-- Condition (full width) -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Техническо състояние *</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                @foreach (var c in new[] {
+                                new { Val = "New",      Emoji = "🏆", Label = "Ново", Sub = "0 км" },
+                                new { Val = "Certified",Emoji = "⭐", Label = "Сертифицирано", Sub = "Проверено" },
+                                new { Val = "Used",     Emoji = "👍", Label = "Употребявано", Sub = "Нормално" },
+                                new { Val = "ForParts", Emoji = "🔧", Label = "За части", Sub = "Дефекти" }
+                                })
+                                {
+                                    <label class="cond-card cursor-pointer border-2 border-gray-200 rounded-xl p-4 text-center hover:border-primary transition-all">
+                                        <input type="radio" asp-for="Condition" value="@c.Val" class="hidden cond-radio">
+                                        <div class="text-3xl mb-1">@c.Emoji</div>
+                                        <div class="font-semibold text-gray-900 text-sm">@c.Label</div>
+                                        <div class="text-xs text-gray-400">@c.Sub</div>
+                                    </label>
+                                }
+                            </div>
+                            <span asp-validation-for="Condition" class="text-red-500 text-xs mt-1 block"></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== STEP 2: FEATURES ===== -->
+            <div id="step-2" class="step-panel hidden">
+                <div class="bg-white rounded-xl shadow-md p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-100">✨ Екстри и оборудване</h2>
+                    <p class="text-gray-500 text-sm mb-6">Отметнете наличните екстри:</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                        @foreach (var e in new[] {
+                        new { Prop = "HasAirConditioner", Label = "Климатик",    Emoji = "❄️" },
+                        new { Prop = "HasNavigation",     Label = "Навигация",   Emoji = "🗺️" },
+                        new { Prop = "HasLeatherSeats",   Label = "Кожен салон", Emoji = "💺" },
+                        new { Prop = "HasParkingSensors", Label = "Парктроник",  Emoji = "📡" },
+                        new { Prop = "HasRearCamera",     Label = "Камера",      Emoji = "📷" },
+                        new { Prop = "HasHeatedSeats",    Label = "Подгряване",  Emoji = "🔥" },
+                        new { Prop = "HasSunroof",        Label = "Люк",         Emoji = "☀️" },
+                        new { Prop = "HasAlloyWheels",    Label = "Ал. джанти",  Emoji = "⚙️" },
+                        new { Prop = "HasBluetooth",      Label = "Bluetooth",   Emoji = "📶" },
+                        new { Prop = "HasCruiseControl",  Label = "Темпомат",    Emoji = "🚀" },
+                        new { Prop = "HasXenon",          Label = "Ксенон",      Emoji = "💡" },
+                        new { Prop = "HasLED",            Label = "LED",         Emoji = "🔦" },
+                        new { Prop = "HasKeylessEntry",   Label = "Keyless",     Emoji = "🔑" },
+                        new { Prop = "HasStartStop",      Label = "Start/Stop",  Emoji = "⏯️" },
+                        })
+                        {
+                            <label class="extra-card cursor-pointer border-2 border-gray-200 rounded-xl p-3 text-center hover:border-primary transition-all">
+                                <input type="checkbox" name="@e.Prop" value="true" class="hidden extra-cb">
+                                <div class="text-2xl mb-1">@e.Emoji</div>
+                                <div class="text-xs font-medium text-gray-700">@e.Label</div>
+                            </label>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== STEP 3: AD DETAILS ===== -->
+            <div id="step-3" class="step-panel hidden">
+                <div class="bg-white rounded-xl shadow-md p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-100">📝 Детайли на обявата</h2>
+                    <div class="space-y-5">
+
+                        <!-- Title -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Заглавие *</label>
+                            <input asp-for="Title" type="text" id="titleInput" maxlength="150"
+                                   placeholder="напр. BMW 320d xDrive 2020, сервизна история"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                            <div class="flex justify-between mt-1">
+                                <span asp-validation-for="Title" class="text-red-500 text-xs"></span>
+                                <span class="text-gray-400 text-xs ml-auto"><span id="tCount">0</span>/150</span>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Описание *</label>
+                            <textarea asp-for="Description" rows="8" id="descInput" maxlength="5000"
+                                      placeholder="Опишете подробно автомобила — история, сервизна книжка, оборудване..."
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition resize-none"></textarea>
+                            <div class="flex justify-between mt-1">
+                                <span asp-validation-for="Description" class="text-red-500 text-xs"></span>
+                                <span class="text-gray-400 text-xs ml-auto"><span id="dCount">0</span>/5000</span>
+                            </div>
+                        </div>
+
+                        <!-- Price + Negotiable -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Цена (лв) *</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">лв</span>
+                                    <input asp-for="Price" type="number" min="0" placeholder="25000"
+                                           class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                </div>
+                                <span asp-validation-for="Price" class="text-red-500 text-xs mt-1 block"></span>
+                            </div>
+                            <div class="flex items-end pb-1">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input asp-for="IsNegotiable" type="checkbox"
+                                           class="w-5 h-5 rounded text-primary border-gray-300 focus:ring-primary">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-700">Договаряне</p>
+                                        <p class="text-xs text-gray-400">Ще се показва в обявата</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- City + Region -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Град *</label>
+                                <input asp-for="City" type="text" placeholder="София"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                                <span asp-validation-for="City" class="text-red-500 text-xs mt-1 block"></span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Район</label>
+                                <input asp-for="Region" type="text" placeholder="Лозенец"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Телефон за контакт</label>
+                            <input asp-for="ContactPhone" type="tel" placeholder="+359 888 123 456"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== STEP 4: IMAGES ===== -->
+            <div id="step-4" class="step-panel hidden">
+                <div class="bg-white rounded-xl shadow-md p-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-100">📷 Снимки</h2>
+
+                    <!-- Drop Zone -->
+                    <div id="dropZone"
+                         class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-primary transition-colors cursor-pointer"
+                         onclick="document.getElementById('imgInput').click()">
+                        <div class="text-5xl mb-3">📸</div>
+                        <p class="font-semibold text-gray-700 mb-1">Плъзнете снимки или кликнете</p>
+                        <p class="text-xs text-gray-400">JPG, PNG, WEBP • до 10 МБ • до 15 снимки</p>
+                    </div>
+                    <input type="file" id="imgInput" name="Images" multiple accept="image/*" class="hidden">
+
+                    <!-- Previews -->
+                    <div id="previews" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 mt-5"></div>
+
+                    <!-- Tips -->
+                    <div class="mt-6 bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-800">
+                        <p class="font-semibold mb-1">💡 Съвети:</p>
+                        Снимайте при естествена светлина. Включете снимки отпред, отзад, отстрани и вътрешността.
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="mt-6 border border-gray-200 rounded-lg p-4">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="agreeTerms" class="mt-0.5 w-4 h-4 rounded text-primary border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-600">
+                                Приемам <a asp-controller="Home" asp-action="Terms" target="_blank" class="text-primary hover:underline font-medium">Общите условия</a>
+                                и потвърждавам, че информацията е вярна и автомобилът е мой.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-6">
+                <button type="button" id="prevBtn" onclick="goStep(-1)"
+                        class="hidden px-8 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition">
+                    ← Назад
+                </button>
+                <button type="button" id="nextBtn" onclick="goStep(1)"
+                        class="ml-auto px-8 py-3 bg-primary hover:bg-secondary text-white rounded-lg font-semibold transition shadow">
+                    Напред →
+                </button>
+                <button type="submit" id="submitBtn"
+                        class="hidden ml-auto px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition shadow">
+                    ✓ Публикувай
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let step = 1;
+        const total = 4;
+
+        function goStep(dir) {
+            if (dir === 1 && !validate(step)) return;
+            document.getElementById(`step-${step}`).classList.add('hidden');
+            markDone(step);
+            step += dir;
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+            setActive(step);
+            updateNav();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setActive(n) {
+            const el = document.getElementById(`si-${n}`);
+            el.className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 bg-primary text-white shadow-lg';
+            el.textContent = n;
+            document.getElementById(`sl-${n}`).className = 'text-xs mt-1 font-medium text-primary';
+            if (n > 1) {
+                const line = document.getElementById(`sline-${n - 1}`);
+                if (line) line.classList.replace('bg-gray-200', 'bg-primary');
+            }
+        }
+
+        function markDone(n) {
+            const el = document.getElementById(`si-${n}`);
+            el.className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 bg-green-500 text-white';
+            el.textContent = '✓';
+            document.getElementById(`sl-${n}`).className = 'text-xs mt-1 font-medium text-green-500';
+        }
+
+        function updateNav() {
+            document.getElementById('prevBtn').classList.toggle('hidden', step === 1);
+            document.getElementById('nextBtn').classList.toggle('hidden', step === total);
+            document.getElementById('submitBtn').classList.toggle('hidden', step !== total);
+        }
+
+        function validate(s) {
+            if (s === 1) {
+                const required = ['MakeId', 'ModelId', 'Year', 'Mileage', 'FuelType', 'TransmissionType'];
+                let ok = true;
+                required.forEach(id => {
+                    const el = document.querySelector(`[name="${id}"]`);
+                    if (!el?.value) { el?.classList.add('border-red-400'); ok = false; }
+                    else el?.classList.remove('border-red-400');
+                });
+                const cond = document.querySelector('.cond-radio:checked');
+                if (!cond) { toast('Изберете техническо състояние!', 'error'); return false; }
+                if (!ok) { toast('Попълнете задължителните полета!', 'error'); return false; }
+            }
+            if (s === 3) {
+                const t = document.getElementById('titleInput')?.value ?? '';
+                const d = document.getElementById('descInput')?.value ?? '';
+                const p = document.querySelector('[name="Price"]')?.value;
+                const c = document.querySelector('[name="City"]')?.value;
+                if (t.length < 10) { toast('Заглавието е твърде кратко!', 'error'); return false; }
+                if (d.length < 30) { toast('Описанието е твърде кратко!', 'error'); return false; }
+                if (!p) { toast('Въведете цена!', 'error'); return false; }
+                if (!c) { toast('Въведете град!', 'error'); return false; }
+            }
+            if (s === 4) {
+                if (!document.getElementById('agreeTerms').checked) {
+                    toast('Трябва да приемете условията!', 'error'); return false;
+                }
+            }
+            return true;
+        }
+
+        // Condition cards
+        document.querySelectorAll('.cond-card').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('.cond-card').forEach(x => x.classList.remove('border-primary', 'bg-blue-50'));
+                c.classList.add('border-primary', 'bg-blue-50');
+                c.querySelector('.cond-radio').checked = true;
+            });
+        });
+
+        // Extra cards
+        document.querySelectorAll('.extra-card').forEach(c => {
+            c.addEventListener('click', () => {
+                const cb = c.querySelector('.extra-cb');
+                cb.checked = !cb.checked;
+                c.classList.toggle('border-primary', cb.checked);
+                c.classList.toggle('bg-blue-50', cb.checked);
+            });
+        });
+
+        // Make → Model AJAX
+        document.getElementById('makeSelect')?.addEventListener('change', async function () {
+            const sel = document.getElementById('modelSelect');
+            sel.innerHTML = '<option value="">Зарежда...</option>';
+            if (!this.value) { sel.innerHTML = '<option value="">— Първо марка —</option>'; return; }
+            try {
+                const r = await fetch(`/Vehicles/GetModelsByMake?makeId=${this.value}`);
+                const data = await r.json();
+                sel.innerHTML = '<option value="">— Изберете модел —</option>' +
+                    data.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+            } catch { sel.innerHTML = '<option value="">Грешка</option>'; }
+        });
+
+        // Char counters
+        document.getElementById('titleInput')?.addEventListener('input', function () {
+            document.getElementById('tCount').textContent = this.value.length;
+        });
+        document.getElementById('descInput')?.addEventListener('input', function () {
+            document.getElementById('dCount').textContent = this.value.length;
+        });
+
+        // Image preview
+        document.getElementById('imgInput')?.addEventListener('change', function () {
+            const wrap = document.getElementById('previews');
+            wrap.innerHTML = '';
+            Array.from(this.files).slice(0, 15).forEach((f, i) => {
+                const rd = new FileReader();
+                rd.onload = ev => {
+                    wrap.insertAdjacentHTML('beforeend', `
+                        <div class="relative rounded-lg overflow-hidden border border-gray-200 aspect-square">
+                            <img src="${ev.target.result}" class="w-full h-full object-cover">
+                            ${i === 0 ? '<div class="absolute top-1 left-1 bg-primary text-white text-xs px-1.5 py-0.5 rounded">Главна</div>' : ''}
+                        </div>`);
+                };
+                rd.readAsDataURL(f);
+            });
+        });
+
+        // Drag & drop
+        const dz = document.getElementById('dropZone');
+        dz?.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('border-primary', 'bg-blue-50'); });
+        dz?.addEventListener('dragleave', () => dz.classList.remove('border-primary', 'bg-blue-50'));
+        dz?.addEventListener('drop', e => {
+            e.preventDefault();
+            dz.classList.remove('border-primary', 'bg-blue-50');
+            const dt = new DataTransfer();
+            Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
+            const inp = document.getElementById('imgInput');
+            inp.files = dt.files;
+            inp.dispatchEvent(new Event('change'));
+        });
+
+        // Toast
+        function toast(msg, type = 'info') {
+            const t = document.createElement('div');
+            t.className = `fixed bottom-5 right-5 z-50 px-5 py-3 rounded-lg shadow-lg font-medium text-white text-sm
+                ${type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-green-600' : 'bg-blue-600'}`;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3500);
+        }
+    </script>
+}

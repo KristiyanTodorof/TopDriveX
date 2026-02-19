@@ -1,0 +1,307 @@
+﻿@model IEnumerable<TopDriveX.Domain.Models.Advertisement>
+
+@{
+    ViewData["Title"] = "Управление на обяви";
+    var totalAds = ViewBag.TotalAds;
+    var currentPage = ViewBag.CurrentPage;
+    var pageSize = ViewBag.PageSize;
+    var totalPages = (int)Math.Ceiling((double)totalAds / pageSize);
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Управление на обяви</h1>
+            <p class="text-gray-600">Общо: @totalAds обяви</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Index"
+           class="bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold transition inline-flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Обратно</span>
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Общо</p>
+                    <p class="text-2xl font-bold text-gray-900">@totalAds</p>
+                </div>
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Активни</p>
+                    <p class="text-2xl font-bold text-green-600">@Model.Count(a => a.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Active)</p>
+                </div>
+                <div class="bg-green-100 text-green-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Pending</p>
+                    <p class="text-2xl font-bold text-yellow-600">@Model.Count(a => a.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Pending)</p>
+                </div>
+                <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm">Изтекли</p>
+                    <p class="text-2xl font-bold text-red-600">@Model.Count(a => a.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Expired)</p>
+                </div>
+                <div class="bg-red-100 text-red-600 p-3 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <input type="text"
+                       id="searchInput"
+                       placeholder="🔍 Търси..."
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+            </div>
+            <select id="statusFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">Всички статуси</option>
+                <option value="Active">Активни</option>
+                <option value="Pending">Pending</option>
+                <option value="Expired">Изтекли</option>
+                <option value="Sold">Продадени</option>
+            </select>
+            <select class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">Всички марки</option>
+                <option value="BMW">BMW</option>
+                <option value="Mercedes">Mercedes</option>
+                <option value="Audi">Audi</option>
+            </select>
+            <select class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">Сортирай по</option>
+                <option value="newest">Най-нови</option>
+                <option value="oldest">Най-стари</option>
+                <option value="price-high">Цена (висока)</option>
+                <option value="price-low">Цена (ниска)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Advertisements List -->
+    <div class="space-y-4">
+        @foreach (var ad in Model)
+        {
+            <div class="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-6">
+
+                    <!-- Vehicle Image Placeholder -->
+                    <div class="md:col-span-2">
+                        <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                            <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Info -->
+                    <div class="md:col-span-6">
+                        <div class="flex items-start justify-between mb-2">
+                            <h3 class="text-xl font-bold text-gray-900">
+                                @ad.Vehicle.Make.Name @ad.Vehicle.Model.Name @ad.Vehicle.Year
+                            </h3>
+                            @if (ad.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Active)
+                            {
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                    ✓ Активна
+                                </span>
+                            }
+                            else if (ad.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Pending)
+                            {
+                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                                    ⏳ Pending
+                                </span>
+                            }
+                            else if (ad.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Expired)
+                            {
+                                <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">
+                                    ⏰ Изтекла
+                                </span>
+                            }
+                            else if (ad.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Sold)
+                            {
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                                    ✓ Продадена
+                                </span>
+                            }
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+                            <div>📅 Година: <span class="font-semibold text-gray-900">@ad.Vehicle.Year</span></div>
+                            <div>🛣️ Пробег: <span class="font-semibold text-gray-900">@ad.Vehicle.Mileage.ToString("N0") км</span></div>
+                            <div>⛽ Гориво: <span class="font-semibold text-gray-900">@ad.Vehicle.FuelType</span></div>
+                            <div>⚙️ Скорости: <span class="font-semibold text-gray-900">@ad.Vehicle.TransmissionType</span></div>
+                        </div>
+
+                        <div class="flex items-center text-sm text-gray-600 space-x-4">
+                            <span>👤 @ad.User.FirstName @ad.User.LastName</span>
+                            <span>📍 @ad.Vehicle.City</span>
+                            <span>👁️ @ad.ViewCount прегледа</span>
+                        </div>
+                    </div>
+
+                    <!-- Price & Actions -->
+                    <div class="md:col-span-4 flex flex-col justify-between">
+                        <div>
+                            <div class="text-3xl font-bold text-primary mb-2">
+                                @ad.Price.ToString("N0") <span class="text-lg">лв</span>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-4">
+                                Публикувана: @ad.PublishedAt.ToString("dd.MM.yyyy HH:mm")
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <a asp-controller="Vehicles" asp-action="Details" asp-route-id="@ad.VehicleId"
+                               class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold transition text-center">
+                                👁️ Преглед
+                            </a>
+
+                            @if (ad.Status == TopDriveX.Domain.Enums.AdvertisementStatus.Pending)
+                            {
+                                <form asp-action="ApproveAd" asp-route-id="@ad.Id" method="post" class="flex-1">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit"
+                                            class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                                        ✓ Одобри
+                                    </button>
+                                </form>
+                            }
+
+                            <form asp-action="DeleteAd" asp-route-id="@ad.Id" method="post" class="flex-1">
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        onclick="return confirm('Сигурни ли сте, че искате да изтриете тази обява?')"
+                                        class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                                    🗑️ Изтрий
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+                <div class="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Няма намерени обяви</h3>
+                <p class="text-gray-600">Опитайте с различни филтри</p>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="mt-8 flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+                Показани <span class="font-medium">@((currentPage - 1) * pageSize + 1)</span> до
+                <span class="font-medium">@Math.Min(currentPage * pageSize, totalAds)</span> от
+                <span class="font-medium">@totalAds</span> резултата
+            </div>
+            <div class="flex space-x-2">
+                @if (currentPage > 1)
+                {
+                    <a asp-action="Advertisements" asp-route-page="@(currentPage - 1)"
+                       class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">
+                        Предишна
+                    </a>
+                }
+
+                @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+                {
+                    <a asp-action="Advertisements" asp-route-page="@i"
+                       class="px-4 py-2 border @(i == currentPage ? "border-primary bg-primary text-white" : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50") rounded-lg text-sm font-medium transition">
+                        @i
+                    </a>
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <a asp-action="Advertisements" asp-route-page="@(currentPage + 1)"
+                       class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">
+                        Следваща
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        // Client-side search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.space-y-4 > div');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Status filter
+        document.getElementById('statusFilter').addEventListener('change', function(e) {
+            const status = e.target.value;
+            const cards = document.querySelectorAll('.space-y-4 > div');
+
+            cards.forEach(card => {
+                if (!status) {
+                    card.style.display = '';
+                } else {
+                    const hasStatus = card.textContent.includes(status);
+                    card.style.display = hasStatus ? '' : 'none';
+                }
+            });
+        });
+    </script>
+}
