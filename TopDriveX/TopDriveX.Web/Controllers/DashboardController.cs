@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TopDriveX.Application.Contracts;
 using TopDriveX.Domain.Models;
 
 namespace TopDriveX.Web.Controllers
@@ -8,114 +9,100 @@ namespace TopDriveX.Web.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
+        private readonly IVehicleService _vehicleService;
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<DashboardController> _logger;
 
         public DashboardController(
-            UserManager<User> userManager,
-            ILogger<DashboardController> logger)
+            IVehicleService vehicleService,
+            UserManager<User> userManager)
         {
+            _vehicleService = vehicleService;
             _userManager = userManager;
-            _logger = logger;
         }
 
-        // ==================== DASHBOARD HOME ====================
+        // ==================== MY ADS ====================
 
-        /// <summary>
-        /// GET: /Dashboard
-        /// Main dashboard page
-        /// </summary>
-        public async Task<IActionResult> Index()
-        {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            ViewBag.UserFullName = $"{user.FirstName} {user.LastName}";
-            ViewBag.UserType = user.UserType.ToString();
-
-            return View(user);
-        }
-
-        // ==================== MY ADVERTISEMENTS ====================
-
-        /// <summary>
-        /// GET: /Dashboard/MyAds
-        /// Shows user's advertisements
-        /// </summary>
+        [HttpGet]
         public async Task<IActionResult> MyAds()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userIdString = _userManager.GetUserId(User);
+            if (userIdString == null) return Unauthorized();
 
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            var userId = Guid.Parse(userIdString);
+            var myAds = await _vehicleService.GetUserAdvertisementsAsync(userId);
 
-            // TODO: Fetch user's advertisements from database
-            // var ads = await _advertisementService.GetUserAdvertisementsAsync(user.Id);
-
-            return View();
+            return View(myAds);
         }
 
         // ==================== FAVORITES ====================
 
-        /// <summary>
-        /// GET: /Dashboard/Favorites
-        /// Shows user's favorite advertisements
-        /// </summary>
+        [HttpGet]
         public async Task<IActionResult> Favorites()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userIdString = _userManager.GetUserId(User);
+            if (userIdString == null) return Unauthorized();
 
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            // TODO: Implement favorites service
+            var favorites = new List<object>();
 
-            // TODO: Fetch user's favorites
-            // var favorites = await _favoriteService.GetUserFavoritesAsync(user.Id);
-
-            return View();
+            return View(favorites);
         }
 
         // ==================== PROFILE ====================
 
-        /// <summary>
-        /// GET: /Dashboard/Profile
-        /// User profile page
-        /// </summary>
+        [HttpGet]
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            var userId = Guid.Parse(_userManager.GetUserId(User)!);
+            var stats = await _vehicleService.GetUserStatsAsync(userId);
+
+            ViewBag.ActiveAds = stats.activeAds;
+            ViewBag.TotalViews = stats.totalViews;
+            ViewBag.TotalFavorites = stats.totalFavorites;
 
             return View(user);
         }
 
-        // ==================== SETTINGS ====================
+        // ==================== SETTINGS GET ====================
 
-        /// <summary>
-        /// GET: /Dashboard/Settings
-        /// Account settings
-        /// </summary>
+        [HttpGet]
         public async Task<IActionResult> Settings()
         {
             var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            if (user == null) return Unauthorized();
 
             return View(user);
+        }
+
+        // ==================== SETTINGS POST ====================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Settings(User model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Update only allowed fields
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] = "Настройките бяха запазени успешно!";
+            }
+            else
+            {
+                TempData["Error"] = "Възникна грешка при запазването!";
+            }
+
+            return RedirectToAction(nameof(Settings));
         }
     }
 }

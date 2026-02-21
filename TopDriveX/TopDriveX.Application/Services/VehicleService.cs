@@ -283,5 +283,43 @@ namespace TopDriveX.Application.Services
                 vehicle.Images = images.OrderBy(i => i.DisplayOrder).ToList();
             }
         }
+
+        public async Task<IEnumerable<VehicleListDto>> GetUserAdvertisementsAsync(Guid userId)
+        {
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
+            var userAds = advertisements.Where(a => a.UserId == userId && !a.IsDeleted).ToList();
+
+            var result = new List<VehicleListDto>();
+
+            foreach (var ad in userAds)
+            {
+                var vehicle = await _unitOfWork.Vehicles.GetByIdAsync(ad.VehicleId);
+                if (vehicle != null)
+                {
+                    await LoadVehicleRelatedDataAsync(vehicle);
+                    result.Add(MapToListDto(vehicle));
+                }
+            }
+
+            return result.OrderByDescending(v => v.Year);
+        }
+
+        // ==================== GET USER STATS ====================
+
+        public async Task<(int activeAds, int totalViews, int totalFavorites)> GetUserStatsAsync(Guid userId)
+        {
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
+            var userAds = advertisements.Where(a => a.UserId == userId && !a.IsDeleted).ToList();
+
+            var activeAds = userAds.Count(a => a.Status == Domain.Enums.AdvertisementStatus.Active);
+            var totalViews = userAds.Sum(a => a.ViewCount);
+
+            // Get favorites count
+            var favorites = await _unitOfWork.Favorites.GetAllAsync();
+            var adIds = userAds.Select(a => a.Id).ToList();
+            var totalFavorites = favorites.Count(f => adIds.Contains(f.AdvertisementId));
+
+            return (activeAds, totalViews, totalFavorites);
+        }
     }
 }

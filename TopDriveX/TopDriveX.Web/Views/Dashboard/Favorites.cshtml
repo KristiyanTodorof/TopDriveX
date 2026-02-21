@@ -1,0 +1,46 @@
+﻿@model IEnumerable<object>
+
+@{
+    ViewData["Title"] = "Любими обяви";
+    var favCount = Model?.Count() ?? 0;
+}
+
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Любими обяви</h1>
+            <p class="text-gray-600 mt-2">
+                @if (favCount == 0)
+                {
+                    <text>Нямаш запазени обяви</text>
+                }
+                else if (favCount == 1)
+                {
+                    <text>Имаш 1 запазена обява</text>
+                }
+                else
+                {
+                    <text>Имаш @favCount запазени обяви</text>
+                }
+            </p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+            <div class="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Нямаш запазени обяви</h3>
+            <p class="text-gray-600 mb-6">Започни да добавяш обяви в любими, за да ги намираш по-лесно</p>
+            <a asp-controller="Vehicles" asp-action="Index"
+               class="inline-block bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg font-semibold transition">
+                Разгледай обяви
+            </a>
+        </div>
+
+    </div>
+</div>

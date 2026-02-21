@@ -30,9 +30,8 @@ namespace TopDriveX.Application.Contracts
         Task<IEnumerable<VehicleListDto>> GetFeaturedVehiclesAsync(int count = 6);
         Task<IEnumerable<VehicleListDto>> GetLatestVehiclesAsync(int count = 10);
 
-        /// <summary>
-        /// Creates Vehicle + Advertisement + saves images. Returns the new Advertisement ID.
-        /// </summary>
         Task<Guid> CreateAdvertisementAsync(CreateVehicleDto dto, Guid userId);
+        Task<IEnumerable<VehicleListDto>> GetUserAdvertisementsAsync(Guid userId);
+        Task<(int activeAds, int totalViews, int totalFavorites)> GetUserStatsAsync(Guid userId);
     }
 }
