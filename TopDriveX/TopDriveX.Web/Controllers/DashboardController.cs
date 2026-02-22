@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TopDriveX.Application.Contracts;
+using TopDriveX.Application.Dtos;
 using TopDriveX.Domain.Models;
 
 namespace TopDriveX.Web.Controllers
@@ -42,9 +44,7 @@ namespace TopDriveX.Web.Controllers
             var userIdString = _userManager.GetUserId(User);
             if (userIdString == null) return Unauthorized();
 
-            // TODO: Implement favorites service
             var favorites = new List<object>();
-
             return View(favorites);
         }
 
@@ -74,35 +74,148 @@ namespace TopDriveX.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            return View(user);
+            var model = new UserSettingsDto
+            {
+                FirstName = user.FirstName ?? "",
+                LastName = user.LastName ?? "",
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber,
+                UserName = user.UserName ?? "",
+                UserType = user.UserType.ToString(),
+                CreatedAt = user.CreatedAt,
+
+                // TODO: Load preferences from database
+                EmailNotificationsMessages = true,
+                EmailNotificationsComments = true,
+                EmailNotificationsPriceChanges = true,
+                SmsNotifications = false,
+                ShowPhonePublicly = true,
+                ShowEmailPublicly = false,
+                AllowDirectMessages = true
+            };
+
+            return View(model);
         }
 
         // ==================== SETTINGS POST ====================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Settings(User model)
+        public async Task<IActionResult> Settings(UserSettingsDto model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            // Update only allowed fields
+            // Update personal info
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.PhoneNumber = model.PhoneNumber;
+
+            // Email change requires confirmation (skip for now)
+            // if (user.Email != model.Email) { ... }
+
+            // TODO: Save notification preferences to database
 
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
             {
                 TempData["Success"] = "Настройките бяха запазени успешно!";
+                return RedirectToAction(nameof(Settings));
             }
             else
             {
                 TempData["Error"] = "Възникна грешка при запазването!";
+                ModelState.AddModelError("", "Не успяхме да запазим промените.");
+                return View(model);
+            }
+        }
+
+        // ==================== CHANGE PASSWORD ====================
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+        {
+            if (string.IsNullOrEmpty(currentPassword) || string.IsNullOrEmpty(newPassword))
+            {
+                TempData["Error"] = "Моля попълнете всички полета!";
+                return RedirectToAction(nameof(Settings));
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                TempData["Error"] = "Новата парола и потвърждението не съвпадат!";
+                return RedirectToAction(nameof(Settings));
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] = "Паролата беше променена успешно!";
+            }
+            else
+            {
+                TempData["Error"] = "Грешка при смяна на паролата. Проверете текущата парола.";
             }
 
             return RedirectToAction(nameof(Settings));
+        }
+
+        // ==================== DELETE ACCOUNT ====================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAccount(string password)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Verify password
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, password);
+            if (!passwordCheck)
+            {
+                TempData["Error"] = "Грешна парола!";
+                return RedirectToAction(nameof(Settings));
+            }
+
+            // Delete user's advertisements
+            var userIdString = _userManager.GetUserId(User);
+            if (userIdString != null)
+            {
+                var userId = Guid.Parse(userIdString);
+                // TODO: Delete user advertisements
+            }
+
+            // Delete user account
+            var result = await _userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
+            {
+                await HttpContext.SignOutAsync();
+                TempData["Success"] = "Акаунтът беше изтрит успешно.";
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                TempData["Error"] = "Възникна грешка при изтриването на акаунта!";
+                return RedirectToAction(nameof(Settings));
+            }
         }
     }
 }
