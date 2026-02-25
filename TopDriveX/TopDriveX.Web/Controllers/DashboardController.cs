@@ -22,6 +22,15 @@ namespace TopDriveX.Web.Controllers
             _userManager = userManager;
         }
 
+        // ==================== INDEX (Default) ====================
+        // Redirect /Dashboard to /Dashboard/Profile
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return RedirectToAction(nameof(Profile));
+        }
+
         // ==================== MY ADS ====================
 
         [HttpGet]
@@ -84,7 +93,6 @@ namespace TopDriveX.Web.Controllers
                 UserType = user.UserType.ToString(),
                 CreatedAt = user.CreatedAt,
 
-                // TODO: Load preferences from database
                 EmailNotificationsMessages = true,
                 EmailNotificationsComments = true,
                 EmailNotificationsPriceChanges = true,
@@ -111,15 +119,9 @@ namespace TopDriveX.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            // Update personal info
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.PhoneNumber = model.PhoneNumber;
-
-            // Email change requires confirmation (skip for now)
-            // if (user.Email != model.Email) { ... }
-
-            // TODO: Save notification preferences to database
 
             var result = await _userManager.UpdateAsync(user);
 
@@ -138,12 +140,6 @@ namespace TopDriveX.Web.Controllers
 
         // ==================== CHANGE PASSWORD ====================
 
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
@@ -157,6 +153,12 @@ namespace TopDriveX.Web.Controllers
             if (newPassword != confirmPassword)
             {
                 TempData["Error"] = "Новата парола и потвърждението не съвпадат!";
+                return RedirectToAction(nameof(Settings));
+            }
+
+            if (newPassword.Length < 6)
+            {
+                TempData["Error"] = "Паролата трябва да е поне 6 символа!";
                 return RedirectToAction(nameof(Settings));
             }
 
@@ -186,7 +188,6 @@ namespace TopDriveX.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            // Verify password
             var passwordCheck = await _userManager.CheckPasswordAsync(user, password);
             if (!passwordCheck)
             {
@@ -194,15 +195,6 @@ namespace TopDriveX.Web.Controllers
                 return RedirectToAction(nameof(Settings));
             }
 
-            // Delete user's advertisements
-            var userIdString = _userManager.GetUserId(User);
-            if (userIdString != null)
-            {
-                var userId = Guid.Parse(userIdString);
-                // TODO: Delete user advertisements
-            }
-
-            // Delete user account
             var result = await _userManager.DeleteAsync(user);
 
             if (result.Succeeded)
