@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TopDriveX</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         primary: '#dc2626',
                         secondary: '#991b1b',
@@ -18,125 +20,136 @@
             }
         }
     </script>
-</head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+    <style>
+        .nav-link-active {
+            color: #dc2626;
+            position: relative;
+        }
 
-    <!-- Navigation -->
-    <nav class="shadow-lg sticky top-0 z-50" style="background-color: #FCFCFC;">
+            .nav-link-active::after {
+                content: '';
+                position: absolute;
+                bottom: -4px;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background-color: #dc2626;
+                border-radius: 2px;
+            }
+
+        .glass-nav {
+            background: rgba(252, 252, 252, 0.8) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+    <nav class="glass-nav sticky top-0 z-[100] transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <!-- Logo - Left -->
-                <div class="flex items-center">
-                    <a asp-controller="Home" asp-action="Index" class="flex items-center">
-                        <img src="~/images/logo.png" alt="TopDriveX Logo" class="h-16 w-auto">
+
+                <div class="flex-shrink-0 flex items-center">
+                    <a asp-controller="Home" asp-action="Index" class="transform hover:scale-105 transition duration-200">
+                        <img src="~/images/logo.png" alt="TopDriveX Logo" class="h-12 md:h-14 w-auto">
                     </a>
                 </div>
 
-                <!-- Navigation Links - Center -->
-                <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-8">
-                    <a asp-controller="Home" asp-action="Index" class="text-gray-700 hover:text-red-600 font-medium transition">
-                        Начало
-                    </a>
-                    <a asp-controller="Makes" asp-action="Index" class="text-gray-700 hover:text-red-600 font-medium transition">
-                        Марки
-                    </a>
-                    <a asp-controller="Vehicles" asp-action="Index" class="text-gray-700 hover:text-red-600 font-medium transition">
-                        Обяви
-                    </a>
-                    <a asp-controller="Home" asp-action="About" class="text-gray-700 hover:text-red-600 font-medium transition">
-                        За нас
-                    </a>
-                    <a asp-controller="Home" asp-action="Contact" class="text-gray-700 hover:text-red-600 font-medium transition">
-                        Контакти
-                    </a>
+                <div class="hidden lg:flex items-center space-x-1">
+                    <a asp-controller="Home" asp-action="Index" class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-primary transition rounded-lg hover:bg-gray-100">Начало</a>
+                    <a asp-controller="Makes" asp-action="Index" class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-primary transition rounded-lg hover:bg-gray-100">Марки</a>
+                    <a asp-controller="Vehicles" asp-action="Index" class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-primary transition rounded-lg hover:bg-gray-100">Обяви</a>
+                    <a asp-controller="Home" asp-action="About" class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-primary transition rounded-lg hover:bg-gray-100">За нас</a>
+                    <a asp-controller="Home" asp-action="Contact" class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-primary transition rounded-lg hover:bg-gray-100">Контакти</a>
                 </div>
 
-                <!-- Right Side - Auth or Add Listing -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <!-- User Menu (with JavaScript dropdown) -->
-                        <div class="relative">
-                            <button id="userMenuButton"
-                                    class="flex items-center space-x-2 text-gray-700 hover:text-red-600 font-medium transition focus:outline-none">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span>@User.Identity.Name</span>
-                                <svg class="w-4 h-4 transition-transform" id="userMenuIcon" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        <a asp-controller="Vehicles" asp-action="Create" class="hidden md:flex bg-primary text-white px-5 py-2.5 rounded-xl hover:bg-secondary font-bold text-sm transition shadow-lg shadow-red-500/20 active:scale-95">
+                            + Добави обява
+                        </a>
+
+                        <div class="relative ml-2">
+                            <button id="userMenuButton" class="flex items-center space-x-2 p-1.5 bg-white border border-gray-200 rounded-full hover:shadow-md transition focus:outline-none">
+                                <div class="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold uppercase">
+                                    @User.Identity.Name[0]
+                                </div>
+                                <svg class="w-4 h-4 text-gray-400 mr-1 transition-transform duration-200" id="userMenuIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
 
-                            <!-- Dropdown Menu (initially hidden) -->
-                            <div id="userMenuDropdown"
-                                 class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-200">
-                                <a asp-controller="Dashboard" asp-action="Profile"
-                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    <span class="mr-2">📊</span> Моят профил
-                                </a>
-                                <a asp-controller="Dashboard" asp-action="MyAds"
-                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    <span class="mr-2">📝</span> Моите обяви
-                                </a>
-                                <a asp-controller="Dashboard" asp-action="Favorites"
-                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    <span class="mr-2">❤️</span> Любими
-                                </a>
+                            <div id="userMenuDropdown" class="hidden absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl py-2 border border-gray-100 ring-1 ring-black ring-opacity-5 divide-y divide-gray-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                                <div class="px-4 py-3">
+                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Потребител</p>
+                                    <p class="text-sm font-bold text-gray-900 truncate">@User.Identity.Name</p>
+                                </div>
+                                <div class="py-1">
+                                    <a asp-controller="Dashboard" asp-action="Profile" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition">
+                                        <span class="mr-3 text-lg">👤</span> Моят профил
+                                    </a>
+                                    <a asp-controller="Dashboard" asp-action="MyAds" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition">
+                                        <span class="mr-3 text-lg">🚗</span> Моите обяви
+                                    </a>
+                                    <a asp-controller="Dashboard" asp-action="Favorites" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition">
+                                        <span class="mr-3 text-lg">❤️</span> Любими
+                                    </a>
+                                </div>
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <hr class="my-2 border-gray-200">
-                                    <a asp-controller="Admin" asp-action="Index"
-                                       class="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold transition">
-                                        <span class="mr-2">👑</span> Админ панел
-                                    </a>
+                                    <div class="py-1">
+                                        <a asp-controller="Admin" asp-action="Index" class="flex items-center px-4 py-2.5 text-sm text-primary font-bold hover:bg-red-50 transition">
+                                            <span class="mr-3 text-lg">👑</span> Админ панел
+                                        </a>
+                                    </div>
                                 }
-                                <hr class="my-2 border-gray-200">
-                                <a asp-controller="Dashboard" asp-action="Settings"
-                                   class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                    <span class="mr-2">⚙️</span> Настройки
-                                </a>
-                                <form asp-controller="Account" asp-action="Logout" method="post" class="block">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit"
-                                            class="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
-                                        <span class="mr-2">🚪</span> Изход
-                                    </button>
-                                </form>
+                                <div class="py-1">
+                                    <a asp-controller="Dashboard" asp-action="Settings" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                        <span class="mr-3 text-lg">⚙️</span> Настройки
+                                    </a>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="block">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="w-full text-left flex items-center px-4 py-2.5 text-sm text-red-600 font-bold hover:bg-red-50 transition">
+                                            <span class="mr-3 text-lg">🚪</span> Изход
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-
-                        <a asp-controller="Vehicles" asp-action="Create"
-                           class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
-                            + Добави обява
-                        </a>
                     }
                     else
                     {
-                        <!-- Login/Register -->
-                        <a asp-controller="Account" asp-action="Login"
-                           class="text-gray-700 hover:text-red-600 font-medium transition">
-                            Вход
-                        </a>
-                        <a asp-controller="Account" asp-action="Register"
-                           class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 font-semibold transition">
-                            Регистрация
-                        </a>
+                        <a asp-controller="Account" asp-action="Login" class="text-sm font-bold text-gray-600 hover:text-primary px-4 transition">Вход</a>
+                        <a asp-controller="Account" asp-action="Register" class="bg-primary text-white px-6 py-2.5 rounded-xl hover:bg-secondary font-bold text-sm transition shadow-lg shadow-red-500/20 active:scale-95">Регистрация</a>
                     }
+
+                    <button id="mobileMenuButton" class="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
                 </div>
             </div>
         </div>
+
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-t border-gray-100 py-4 px-4 space-y-1">
+            <a asp-controller="Home" asp-action="Index" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 hover:text-primary rounded-xl transition">Начало</a>
+            <a asp-controller="Makes" asp-action="Index" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 hover:text-primary rounded-xl transition">Марки</a>
+            <a asp-controller="Vehicles" asp-action="Index" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 hover:text-primary rounded-xl transition">Обяви</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <hr class="my-2 border-gray-50">
+                <a asp-controller="Vehicles" asp-action="Create" class="block px-4 py-3 text-base font-bold text-primary bg-red-50 rounded-xl transition">+ Добави обява</a>
+            }
+        </div>
     </nav>
 
-    <!-- TempData Messages -->
     @if (TempData["Success"] != null)
     {
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                <span>@TempData["Success"]</span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 animate-bounce">
+            <div class="bg-green-50 border border-green-200 text-green-800 rounded-2xl p-4 flex items-center shadow-sm">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                <span class="font-medium">@TempData["Success"]</span>
             </div>
         </div>
     }
@@ -144,114 +157,84 @@
     @if (TempData["Error"] != null)
     {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                </svg>
-                <span>@TempData["Error"]</span>
+            <div class="bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 flex items-center shadow-sm">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                <span class="font-medium">@TempData["Error"]</span>
             </div>
         </div>
     }
 
-    <!-- Main Content -->
     <main class="flex-grow">
         @RenderBody()
     </main>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-white mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="py-10">
                 <div class="text-center mb-8">
-                    <p class="text-gray-400 text-sm max-w-xl mx-auto">
-                        Вашият надежден партньор за намиране и продажба на автомобили в България.
-                    </p>
+                    <p class="text-gray-400 text-sm max-w-xl mx-auto">Вашият надежден партньор за намиране и продажба на автомобили в България.</p>
                 </div>
-
-                <div class="flex justify-center space-x-6 mb-8 flex-wrap text-sm">
-                    <a asp-controller="Home" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">Начало</a>
-                    <a asp-controller="Vehicles" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">Обяви</a>
-                    <a asp-controller="Makes" asp-action="Index" class="text-gray-400 hover:text-red-500 transition">Марки</a>
-                    <a asp-controller="Home" asp-action="About" class="text-gray-400 hover:text-red-500 transition">За нас</a>
-                    <a asp-controller="Home" asp-action="Contact" class="text-gray-400 hover:text-red-500 transition">Контакти</a>
+                <div class="flex justify-center space-x-6 mb-8 flex-wrap text-sm font-medium">
+                    <a asp-controller="Home" asp-action="Index" class="text-gray-400 hover:text-white transition">Начало</a>
+                    <a asp-controller="Vehicles" asp-action="Index" class="text-gray-400 hover:text-white transition">Обяви</a>
+                    <a asp-controller="Makes" asp-action="Index" class="text-gray-400 hover:text-white transition">Марки</a>
+                    <a asp-controller="Home" asp-action="About" class="text-gray-400 hover:text-white transition">За нас</a>
+                    <a asp-controller="Home" asp-action="Contact" class="text-gray-400 hover:text-white transition">Контакти</a>
                 </div>
-
                 <div class="flex justify-center space-x-8 mb-6 flex-wrap text-sm text-gray-400">
-                    <span class="flex items-center"><span class="mr-2">📍</span> Тутракан, България</span>
-                    <span class="flex items-center"><span class="mr-2">📞</span> +359 888 916 060</span>
-                    <span class="flex items-center"><span class="mr-2">✉️</span> info@topdrivex.bg</span>
+                    <span class="flex items-center"><span class="mr-2 opacity-50">📍</span> Тутракан, България</span>
+                    <span class="flex items-center"><span class="mr-2 opacity-50">📞</span> +359 888 916 060</span>
+                    <span class="flex items-center"><span class="mr-2 opacity-50">✉️</span> info@topdrivex.bg</span>
                 </div>
-
-                <div class="flex justify-center space-x-3">
-                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
-                        <span class="text-lg">📘</span>
-                    </a>
-                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
-                        <span class="text-lg">📷</span>
-                    </a>
-                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
-                        <span class="text-lg">🐦</span>
-                    </a>
-                    <a href="#" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-full flex items-center justify-center transition">
-                        <span class="text-lg">▶️</span>
-                    </a>
+                <div class="flex justify-center space-x-4">
+                    <a href="#" class="bg-gray-800 hover:bg-primary w-10 h-10 rounded-xl flex items-center justify-center transition duration-300">fb</a>
+                    <a href="#" class="bg-gray-800 hover:bg-primary w-10 h-10 rounded-xl flex items-center justify-center transition duration-300">ig</a>
                 </div>
             </div>
-
-            <div class="border-t border-gray-800 py-4">
-                <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
-                    <p class="mb-2 md:mb-0">
-                        &copy; 2026 <span class="text-red-500 font-semibold">TopDriveX</span>. Всички права запазени.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a asp-controller="Home" asp-action="Privacy" class="hover:text-red-500 transition">Поверителност</a>
-                        <a href="#" class="hover:text-red-500 transition">Условия</a>
-                        <a href="#" class="hover:text-red-500 transition">Cookies</a>
+            <div class="border-t border-gray-800 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-bold uppercase tracking-widest">
+                    <p>&copy; 2026 TopDriveX</p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a asp-controller="Home" asp-action="Privacy" class="hover:text-white transition">Поверителност</a>
+                        <a href="#" class="hover:text-white transition">Условия</a>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- User Menu Dropdown JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const button = document.getElementById('userMenuButton');
             const dropdown = document.getElementById('userMenuDropdown');
             const icon = document.getElementById('userMenuIcon');
+            const mobileBtn = document.getElementById('mobileMenuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
 
             if (button && dropdown) {
-                // Toggle dropdown on button click
                 button.addEventListener('click', function (e) {
                     e.stopPropagation();
                     const isHidden = dropdown.classList.contains('hidden');
-
-                    if (isHidden) {
-                        dropdown.classList.remove('hidden');
-                        icon.style.transform = 'rotate(180deg)';
-                    } else {
-                        dropdown.classList.add('hidden');
-                        icon.style.transform = 'rotate(0deg)';
-                    }
+                            dropdown.classList.toggle('hidden');
+                    icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
                 });
 
-                // Close dropdown when clicking outside
                 document.addEventListener('click', function (e) {
                     if (!button.contains(e.target) && !dropdown.contains(e.target)) {
                         dropdown.classList.add('hidden');
-                        icon.style.transform = 'rotate(0deg)';
+                                icon.style.transform = 'rotate(0deg)';
                     }
                 });
+                    }
 
-                // Prevent dropdown from closing when clicking inside it
-                dropdown.addEventListener('click', function (e) {
-                    e.stopPropagation();
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                        mobileMenu.classList.toggle('hidden');
+                        });
+                    }
                 });
-            }
-        });
     </script>
 
     @RenderSection("Scripts", required: false)
-
 </body>
 </html>
