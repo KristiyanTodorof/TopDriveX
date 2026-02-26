@@ -35,15 +35,24 @@ namespace TopDriveX.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(
-            Guid? makeId, Guid? modelId,
-            int? yearFrom, int? yearTo,
-            decimal? priceFrom, decimal? priceTo,
-            int? mileageFrom, int? mileageTo,
-            string? city)
+           Guid? makeId, Guid? modelId,
+           int? yearFrom, int? yearTo,
+           decimal? priceFrom, decimal? priceTo,
+           int? mileageFrom, int? mileageTo,
+           string? city,
+           int page = 1,
+           int pageSize = 12)
         {
-            var vehicles = await _vehicleService.SearchVehiclesAsync(
+            var allFilteredVehicles = await _vehicleService.SearchVehiclesAsync(
                 makeId, modelId, yearFrom, yearTo,
                 priceFrom, priceTo, mileageFrom, mileageTo, city);
+
+            var totalVehicles = allFilteredVehicles.Count();
+
+            var paginatedVehicles = allFilteredVehicles
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             var makes = await _makeService.GetAllMakesAsync();
             var vehicleTypes = await _vehicleTypeService.GetAllVehicleTypesAsync();
@@ -51,7 +60,18 @@ namespace TopDriveX.Web.Controllers
             ViewBag.Makes = new SelectList(makes, "Id", "Name", makeId);
             ViewBag.VehicleTypes = new SelectList(vehicleTypes, "Id", "Name");
 
-            return View(vehicles);
+            ViewBag.TotalVehicles = totalVehicles;
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.MakeId = makeId;
+            ViewBag.ModelId = modelId;
+            ViewBag.YearFrom = yearFrom;
+            ViewBag.YearTo = yearTo;
+            ViewBag.PriceFrom = priceFrom;
+            ViewBag.PriceTo = priceTo;
+            ViewBag.City = city;
+
+            return View(paginatedVehicles);
         }
 
         // ==================== DETAILS ====================

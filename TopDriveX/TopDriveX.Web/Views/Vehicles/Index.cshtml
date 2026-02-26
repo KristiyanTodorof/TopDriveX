@@ -5,72 +5,44 @@
     ViewData["Title"] = "Обяви за автомобили";
     var makes = await MakeService.GetAllMakesAsync();
     var cities = new[] { "Sofia", "Plovdiv", "Varna", "Burgas", "Rousse", "Stara Zagora" };
+
+    var totalVehicles = ViewBag.TotalVehicles ?? 0;
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var pageSize = ViewBag.PageSize ?? 12;
+    var totalPages = (int)Math.Ceiling((double)totalVehicles / pageSize);
 }
 
-<!-- Header -->
 <div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-5xl font-bold mb-4">Всички обяви за автомобили</h1>
-        <p class="text-xl text-red-100">Намерени: <span class="font-bold">@Model.Count()</span> автомобила</p>
+        <p class="text-xl text-red-100">Намерени: <span class="font-bold">@totalVehicles</span> автомобила</p>
     </div>
 </div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-        <!-- Sidebar Filters -->
         <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-lg p-6 sticky top-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 sticky top-4 border border-gray-100">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="mr-2">🔍</span>
-                    Филтри
+                    <span class="mr-2">🔍</span> Филтри
                 </h2>
 
                 <form method="get" asp-action="Index">
-                    <!-- Make Filter -->
                     <div class="mb-6">
-                        <label class="block text-gray-700 font-semibold mb-2">Марка</label>
-                        <select name="makeId" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <label class="block text-gray-700 font-semibold mb-2 text-sm">Марка</label>
+                        <select name="makeId" class="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
                             <option value="">Всички марки</option>
                             @foreach (var make in makes.OrderBy(m => m.Name))
                             {
-                                <option value="@make.Id" selected="@(ViewBag.MakeId?.ToString() == make.Id.ToString())">
-                                    @make.Name
-                                </option>
+                                <option value="@make.Id" selected="@(ViewBag.MakeId?.ToString() == make.Id.ToString())">@make.Name</option>
                             }
                         </select>
                     </div>
 
-                    <!-- Year Range -->
                     <div class="mb-6">
-                        <label class="block text-gray-700 font-semibold mb-2">Година</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="number" name="yearFrom" value="@ViewBag.YearFrom"
-                                   placeholder="От" min="1990" max="2025"
-                                   class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                            <input type="number" name="yearTo" value="@ViewBag.YearTo"
-                                   placeholder="До" min="1990" max="2025"
-                                   class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                        </div>
-                    </div>
-
-                    <!-- Price Range -->
-                    <div class="mb-6">
-                        <label class="block text-gray-700 font-semibold mb-2">Цена (лв)</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="number" name="priceFrom" value="@ViewBag.PriceFrom"
-                                   placeholder="От"
-                                   class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                            <input type="number" name="priceTo" value="@ViewBag.PriceTo"
-                                   placeholder="До"
-                                   class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                        </div>
-                    </div>
-
-                    <!-- City Filter -->
-                    <div class="mb-6">
-                        <label class="block text-gray-700 font-semibold mb-2">Град</label>
-                        <select name="city" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <label class="block text-gray-700 font-semibold mb-2 text-sm">Град</label>
+                        <select name="city" class="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
                             <option value="">Всички градове</option>
                             @foreach (var city in cities)
                             {
@@ -79,97 +51,55 @@
                         </select>
                     </div>
 
-                    <!-- Buttons -->
                     <div class="space-y-3">
-                        <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-semibold transition shadow-md">
-                            🔍 Приложи филтри
+                        <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold transition shadow-lg shadow-red-200">
+                            Приложи филтри
                         </button>
-                        <a asp-action="Index" class="block w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 font-semibold transition text-center">
-                            ✖️ Изчисти филтри
+                        <a asp-action="Index" class="block w-full bg-gray-100 text-gray-600 px-6 py-3 rounded-lg hover:bg-gray-200 font-semibold transition text-center text-sm">
+                            Изчисти
                         </a>
                     </div>
                 </form>
-
-                <!-- Stats -->
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <div class="text-center">
-                        <p class="text-gray-600 mb-2">Обяви в системата</p>
-                        <p class="text-3xl font-bold text-red-600">@Model.Count()</p>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="lg:col-span-3">
-            <!-- Sort & View Options -->
-            <div class="bg-white rounded-xl shadow-lg p-4 mb-6 flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-600 font-medium">Сортирай по:</span>
-                    <select id="sortSelect" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                        <option value="newest">Най-нови</option>
-                        <option value="price-asc">Цена (възходящо)</option>
-                        <option value="price-desc">Цена (низходящо)</option>
-                        <option value="year-desc">Година (нови първо)</option>
-                        <option value="mileage-asc">Пробег (малък първо)</option>
-                    </select>
-                </div>
-                <div class="text-gray-600">
-                    <span class="font-semibold">@Model.Count()</span> резултата
-                </div>
-            </div>
 
-            <!-- Vehicle Grid -->
             @if (Model.Any())
             {
                 <div id="vehiclesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     @foreach (var vehicle in Model)
                     {
-                        <div class="vehicle-card bg-white rounded-xl shadow-lg hover:shadow-2xl transition overflow-hidden"
-                             data-price="@vehicle.Price"
-                             data-year="@vehicle.Year"
-                             data-mileage="@vehicle.Mileage">
-                            <div class="relative h-48 overflow-hidden group">
+                        <div class="vehicle-card bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group">
+                            <div class="relative h-48 overflow-hidden">
                                 <img src="@(vehicle.MainImage ?? "https://placehold.co/400x300/red/white?text=Car")"
                                      alt="@vehicle.MakeName @vehicle.ModelName"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                                <div class="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <div class="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold">
                                     @vehicle.Year г.
                                 </div>
                             </div>
                             <div class="p-5">
-                                <div class="mb-4">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-1">@vehicle.MakeName @vehicle.ModelName</h3>
-                                    <p class="text-gray-500 text-sm flex items-center">
-                                        <span class="mr-1">📍</span>
-                                        @vehicle.City
-                                    </p>
-                                </div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">@vehicle.MakeName @vehicle.ModelName</h3>
+                                <p class="text-gray-500 text-xs mb-4 flex items-center">
+                                    <span class="mr-1">📍</span> @vehicle.City
+                                </p>
 
-                                <div class="grid grid-cols-2 gap-3 mb-4 text-sm">
-                                    <div class="flex items-center text-gray-700">
-                                        <span class="mr-2 text-lg">🛣️</span>
-                                        <div>
-                                            <p class="text-xs text-gray-500">Пробег</p>
-                                            <p class="font-semibold">@vehicle.Mileage.ToString("N0") км</p>
-                                        </div>
+                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                    <div class="bg-gray-50 p-2 rounded-lg text-center">
+                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Пробег</p>
+                                        <p class="text-sm font-bold text-gray-700">@vehicle.Mileage.ToString("N0") км</p>
                                     </div>
-                                    <div class="flex items-center text-gray-700">
-                                        <span class="mr-2 text-lg">📅</span>
-                                        <div>
-                                            <p class="text-xs text-gray-500">Година</p>
-                                            <p class="font-semibold">@vehicle.Year</p>
-                                        </div>
+                                    <div class="bg-gray-50 p-2 rounded-lg text-center">
+                                        <p class="text-[10px] uppercase text-gray-400 font-bold">Година</p>
+                                        <p class="text-sm font-bold text-gray-700">@vehicle.Year</p>
                                     </div>
                                 </div>
 
-                                <div class="border-t border-gray-200 pt-4 flex justify-between items-center">
-                                    <div>
-                                        <p class="text-xs text-gray-500 mb-1">Цена</p>
-                                        <p class="text-2xl font-bold text-red-600">@vehicle.Price.ToString("N0") лв</p>
-                                    </div>
+                                <div class="border-t border-gray-100 pt-4 flex justify-between items-center">
+                                    <p class="text-xl font-black text-red-600">@vehicle.Price.ToString("N0") лв</p>
                                     <a asp-action="Details" asp-route-id="@vehicle.Id"
-                                       class="bg-red-600 text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition text-sm font-semibold shadow-md hover:shadow-lg">
+                                       class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm font-bold shadow-md">
                                         Детайли
                                     </a>
                                 </div>
@@ -177,14 +107,60 @@
                         </div>
                     }
                 </div>
+
+                @if (totalPages > 1)
+                {
+                    <div class="mt-12 flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 pt-8">
+                        <div class="text-sm text-gray-500 mb-4 sm:mb-0">
+                            Показани <span class="font-bold text-gray-900">@((currentPage - 1) * pageSize + 1)</span> -
+                            <span class="font-bold text-gray-900">@Math.Min(currentPage * pageSize, totalVehicles)</span>
+                            от <span class="font-bold text-gray-900">@totalVehicles</span>
+                        </div>
+
+                        <nav class="flex space-x-1">
+                            @if (currentPage > 1)
+                            {
+                                <a asp-action="Index"
+                                   asp-route-page="@(currentPage - 1)"
+                                   asp-route-makeId="@ViewBag.MakeId"
+                                   asp-route-city="@ViewBag.City"
+                                   class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-red-600 hover:text-white transition">
+                                    &laquo;
+                                </a>
+                            }
+
+                            @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+                            {
+                                <a asp-action="Index"
+                                   asp-route-page="@i"
+                                   asp-route-makeId="@ViewBag.MakeId"
+                                   asp-route-city="@ViewBag.City"
+                                   class="px-4 py-2 border rounded-lg text-sm font-bold transition @(i == currentPage ? "bg-red-600 border-red-600 text-white shadow-lg shadow-red-200" : "border-gray-200 text-gray-600 bg-white hover:bg-gray-50")">
+                                    @i
+                                </a>
+                            }
+
+                            @if (currentPage < totalPages)
+                            {
+                                <a asp-action="Index"
+                                   asp-route-page="@(currentPage + 1)"
+                                   asp-route-makeId="@ViewBag.MakeId"
+                                   asp-route-city="@ViewBag.City"
+                                   class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-red-600 hover:text-white transition">
+                                    &raquo;
+                                </a>
+                            }
+                        </nav>
+                    </div>
+                }
             }
             else
             {
-                <div class="bg-white rounded-xl shadow-lg p-16 text-center">
-                    <div class="text-6xl mb-4">😔</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Няма намерени резултати</h3>
-                    <p class="text-gray-600 mb-6">Опитайте с други филтри</p>
-                    <a asp-action="Index" class="inline-block bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 font-semibold transition">
+                <div class="bg-white rounded-xl shadow-lg p-16 text-center border border-gray-100">
+                    <div class="text-6xl mb-4">🚗💨</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Няма намерени автомобили</h3>
+                    <p class="text-gray-500 mb-6">Опитайте да промените критериите за търсене</p>
+                    <a asp-action="Index" class="inline-block bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 font-bold transition shadow-lg">
                         Изчисти филтрите
                     </a>
                 </div>
@@ -192,38 +168,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    // Sort functionality
-    document.getElementById('sortSelect').addEventListener('change', function() {
-        const sortBy = this.value;
-        const grid = document.getElementById('vehiclesGrid');
-        const cards = Array.from(document.querySelectorAll('.vehicle-card'));
-
-        cards.sort((a, b) => {
-            const priceA = parseFloat(a.dataset.price);
-            const priceB = parseFloat(b.dataset.price);
-            const yearA = parseInt(a.dataset.year);
-            const yearB = parseInt(b.dataset.year);
-            const mileageA = parseInt(a.dataset.mileage);
-            const mileageB = parseInt(b.dataset.mileage);
-
-            switch(sortBy) {
-                case 'price-asc':
-                    return priceA - priceB;
-                case 'price-desc':
-                    return priceB - priceA;
-                case 'year-desc':
-                    return yearB - yearA;
-                case 'mileage-asc':
-                    return mileageA - mileageB;
-                default:
-                    return 0;
-            }
-        });
-
-        // Clear and re-append sorted cards
-        grid.innerHTML = '';
-        cards.forEach(card => grid.appendChild(card));
-    });
-</script>
