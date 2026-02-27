@@ -1,10 +1,11 @@
 ﻿@using TopDriveX.Application.Contracts
+@using TopDriveX.Application.Dtos
 @model IEnumerable<VehicleListDto>
 @inject IMakeService MakeService
 @{
     ViewData["Title"] = "Обяви за автомобили";
     var makes = await MakeService.GetAllMakesAsync();
-    var cities = new[] { "Sofia", "Plovdiv", "Varna", "Burgas", "Rousse", "Stara Zagora" };
+    var cities = new[] { "София", "Пловдив", "Варна", "Бургас", "Русе", "Стара Загора", "Плевен", "Велико Търново", "Шумен", "Перник" };
 
     var totalVehicles = ViewBag.TotalVehicles ?? 0;
     var currentPage = ViewBag.CurrentPage ?? 1;
@@ -22,6 +23,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
+        <!-- Filters Sidebar -->
         <div class="lg:col-span-1">
             <div class="bg-white rounded-xl shadow-lg p-6 sticky top-4 border border-gray-100">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -29,6 +31,7 @@
                 </h2>
 
                 <form method="get" asp-action="Index">
+                    <!-- Make -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2 text-sm">Марка</label>
                         <select name="makeId" class="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
@@ -40,6 +43,7 @@
                         </select>
                     </div>
 
+                    <!-- City -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2 text-sm">Град</label>
                         <select name="city" class="w-full px-4 py-3 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
@@ -51,18 +55,53 @@
                         </select>
                     </div>
 
+                    <!-- Price Range -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm">Цена (лв)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" name="priceFrom" placeholder="От" value="@ViewBag.PriceFrom"
+                                   class="px-3 py-2 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition text-sm">
+                            <input type="number" name="priceTo" placeholder="До" value="@ViewBag.PriceTo"
+                                   class="px-3 py-2 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Year Range -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm">Година</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" name="yearFrom" placeholder="От" value="@ViewBag.YearFrom" min="1900" max="@DateTime.Now.Year"
+                                   class="px-3 py-2 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition text-sm">
+                            <input type="number" name="yearTo" placeholder="До" value="@ViewBag.YearTo" min="1900" max="@DateTime.Now.Year"
+                                   class="px-3 py-2 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Mileage Range -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-3 text-sm">Пробег (км)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" name="mileageFrom" placeholder="От" value="@ViewBag.MileageFrom"
+                                   class="px-3 py-2 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition text-sm">
+                            <input type="number" name="mileageTo" placeholder="До" value="@ViewBag.MileageTo"
+                                   class="px-3 py-2 border-2 border-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
                     <div class="space-y-3">
                         <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold transition shadow-lg shadow-red-200">
-                            Приложи филтри
+                            🔍 Приложи филтри
                         </button>
                         <a asp-action="Index" class="block w-full bg-gray-100 text-gray-600 px-6 py-3 rounded-lg hover:bg-gray-200 font-semibold transition text-center text-sm">
-                            Изчисти
+                            ✕ Изчисти
                         </a>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- Results Area -->
         <div class="lg:col-span-3">
 
             @if (Model.Any())
@@ -108,6 +147,7 @@
                     }
                 </div>
 
+                <!-- Pagination -->
                 @if (totalPages > 1)
                 {
                     <div class="mt-12 flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 pt-8">
@@ -124,6 +164,12 @@
                                    asp-route-page="@(currentPage - 1)"
                                    asp-route-makeId="@ViewBag.MakeId"
                                    asp-route-city="@ViewBag.City"
+                                   asp-route-priceFrom="@ViewBag.PriceFrom"
+                                   asp-route-priceTo="@ViewBag.PriceTo"
+                                   asp-route-yearFrom="@ViewBag.YearFrom"
+                                   asp-route-yearTo="@ViewBag.YearTo"
+                                   asp-route-mileageFrom="@ViewBag.MileageFrom"
+                                   asp-route-mileageTo="@ViewBag.MileageTo"
                                    class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-red-600 hover:text-white transition">
                                     &laquo;
                                 </a>
@@ -135,6 +181,12 @@
                                    asp-route-page="@i"
                                    asp-route-makeId="@ViewBag.MakeId"
                                    asp-route-city="@ViewBag.City"
+                                   asp-route-priceFrom="@ViewBag.PriceFrom"
+                                   asp-route-priceTo="@ViewBag.PriceTo"
+                                   asp-route-yearFrom="@ViewBag.YearFrom"
+                                   asp-route-yearTo="@ViewBag.YearTo"
+                                   asp-route-mileageFrom="@ViewBag.MileageFrom"
+                                   asp-route-mileageTo="@ViewBag.MileageTo"
                                    class="px-4 py-2 border rounded-lg text-sm font-bold transition @(i == currentPage ? "bg-red-600 border-red-600 text-white shadow-lg shadow-red-200" : "border-gray-200 text-gray-600 bg-white hover:bg-gray-50")">
                                     @i
                                 </a>
@@ -146,6 +198,12 @@
                                    asp-route-page="@(currentPage + 1)"
                                    asp-route-makeId="@ViewBag.MakeId"
                                    asp-route-city="@ViewBag.City"
+                                   asp-route-priceFrom="@ViewBag.PriceFrom"
+                                   asp-route-priceTo="@ViewBag.PriceTo"
+                                   asp-route-yearFrom="@ViewBag.YearFrom"
+                                   asp-route-yearTo="@ViewBag.YearTo"
+                                   asp-route-mileageFrom="@ViewBag.MileageFrom"
+                                   asp-route-mileageTo="@ViewBag.MileageTo"
                                    class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-red-600 hover:text-white transition">
                                     &raquo;
                                 </a>
@@ -156,6 +214,7 @@
             }
             else
             {
+                <!-- Empty State -->
                 <div class="bg-white rounded-xl shadow-lg p-16 text-center border border-gray-100">
                     <div class="text-6xl mb-4">🚗💨</div>
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">Няма намерени автомобили</h3>
