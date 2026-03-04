@@ -33,5 +33,8 @@ namespace TopDriveX.Application.Contracts
         Task<Guid> CreateAdvertisementAsync(CreateVehicleDto dto, Guid userId);
         Task<IEnumerable<VehicleListDto>> GetUserAdvertisementsAsync(Guid userId);
         Task<(int activeAds, int totalViews, int totalFavorites)> GetUserStatsAsync(Guid userId);
+        Task<EditAdvertisementDto?> GetAdvertisementForEditAsync(Guid advertisementId);
+        Task<bool> UpdateAdvertisementAsync(Guid advertisementId, EditAdvertisementDto model, Guid currentUserId, bool isAdmin);
+        Task<bool> DeleteAdvertisementAsync(Guid advertisementId, Guid currentUserId, bool isAdmin);
     }
 }

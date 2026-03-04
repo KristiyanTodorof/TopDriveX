@@ -16,19 +16,22 @@ namespace TopDriveX.Web.Controllers
         private readonly IModelService _modelService;
         private readonly IVehicleTypeService _vehicleTypeService;
         private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
 
         public VehiclesController(
             IVehicleService vehicleService,
             IMakeService makeService,
             IModelService modelService,
             IVehicleTypeService vehicleTypeService,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            IUnitOfWork unitOfWork)
         {
             _vehicleService = vehicleService;
             _makeService = makeService;
             _modelService = modelService;
             _vehicleTypeService = vehicleTypeService;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
         }
 
         // ==================== INDEX ====================
@@ -218,6 +221,123 @@ namespace TopDriveX.Web.Controllers
                 "Черен", "Бял", "Сребрист", "Сив", "Червен", "Син",
                 "Зелен", "Жълт", "Оранжев", "Кафяв", "Бежов", "Лилав", "Друг"
             });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            // id is vehicleId from Details page button
+            // Find advertisement by vehicleId
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
+            var ad = advertisements.FirstOrDefault(a => a.VehicleId == id);
+
+            if (ad == null)
+            {
+                TempData["Error"] = "Обявата не беше намерена!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Now get the full model using advertisementId
+            var model = await _vehicleService.GetAdvertisementForEditAsync(ad.Id);
+
+            if (model == null)
+            {
+                TempData["Error"] = "Обявата не беше намерена!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (currentUserId == null) return Unauthorized();
+
+            var isAdmin = User.IsInRole("Admin");
+
+            // Check permissions
+            if (!isAdmin && model.OwnerId.ToString() != currentUserId)
+            {
+                TempData["Error"] = "Нямате права да редактирате тази обява!";
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+
+            await PopulateDropdownsAsync();
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, EditAdvertisementDto model)
+        {
+            if (id != model.AdvertisementId) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdownsAsync();
+                return View(model);
+            }
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (currentUserId == null) return Unauthorized();
+
+            var isAdmin = User.IsInRole("Admin");
+
+            try
+            {
+                var success = await _vehicleService.UpdateAdvertisementAsync(
+                    id, model, Guid.Parse(currentUserId), isAdmin);
+
+                if (success)
+                {
+                    TempData["Success"] = "Обявата беше обновена успешно!";
+                    return RedirectToAction(nameof(Details), new { id = model.VehicleId });
+                }
+                else
+                {
+                    TempData["Error"] = "Нямате права да редактирате тази обява!";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Възникна грешка при обновяването.");
+                await PopulateDropdownsAsync();
+                return View(model);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            // id is vehicleId from Details page
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
+            var ad = advertisements.FirstOrDefault(a => a.VehicleId == id);
+
+            if (ad == null)
+            {
+                TempData["Error"] = "Обявата не беше намерена!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (currentUserId == null) return Unauthorized();
+
+            var isAdmin = User.IsInRole("Admin");
+
+            var success = await _vehicleService.DeleteAdvertisementAsync(
+                ad.Id, Guid.Parse(currentUserId), isAdmin);
+
+            if (success)
+            {
+                TempData["Success"] = "Обявата беше изтрита успешно!";
+            }
+            else
+            {
+                TempData["Error"] = "Нямате права да изтриете тази обява!";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

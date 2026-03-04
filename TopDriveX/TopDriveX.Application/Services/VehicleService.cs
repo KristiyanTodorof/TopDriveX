@@ -321,5 +321,164 @@ namespace TopDriveX.Application.Services
 
             return (activeAds, totalViews, totalFavorites);
         }
+
+        public async Task<EditAdvertisementDto?> GetAdvertisementForEditAsync(Guid advertisementId)
+        {
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
+            var ad = advertisements.FirstOrDefault(a => a.Id == advertisementId);
+
+            if (ad == null) return null;
+
+            var vehicle = await _unitOfWork.Vehicles.GetByIdAsync(ad.VehicleId);
+            if (vehicle == null) return null;
+
+            await LoadVehicleRelatedDataAsync(vehicle);
+
+            var model = new EditAdvertisementDto
+            {
+                AdvertisementId = ad.Id,
+                VehicleId = vehicle.Id,
+                OwnerId = ad.UserId,
+                MakeId = vehicle.MakeId,
+                ModelId = vehicle.ModelId,
+                VehicleTypeId = vehicle.VehicleTypeId,
+                Year = vehicle.Year,
+                Mileage = vehicle.Mileage,
+                VIN = vehicle.VIN,
+                FuelType = vehicle.FuelType,
+                TransmissionType = vehicle.TransmissionType,
+                BodyStyle = vehicle.BodyStyle ?? Domain.Enums.BodyStyle.Sedan,
+                Condition = vehicle.Condition,
+                HorsePower = vehicle.HorsePower,
+                EngineSize = vehicle.EngineSize,
+                Cylinders = vehicle.Cylinders,
+                Color = vehicle.Color,
+                InteriorColor = vehicle.InteriorColor,
+                Doors = vehicle.Doors,
+                Seats = vehicle.Seats,
+                Title = ad.Title,
+                Description = ad.Description ?? "",
+                Price = ad.Price,
+                IsNegotiable = ad.IsNegotiable,
+                City = vehicle.City,
+                Region = vehicle.Region,
+                ExistingImages = vehicle.Images?
+                    .OrderBy(i => i.DisplayOrder)
+                    .Select(i => i.ImageUrl)
+                    .ToList() ?? new List<string>(),
+                Features = vehicle.Features
+            };
+
+            return model;
+        }
+
+        public async Task<bool> UpdateAdvertisementAsync(Guid advertisementId, EditAdvertisementDto model, Guid currentUserId, bool isAdmin)
+        {
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
+            var ad = advertisements.FirstOrDefault(a => a.Id == advertisementId);
+
+            if (ad == null) return false;
+
+            if (!isAdmin && ad.UserId != currentUserId) return false;
+
+            var vehicle = await _unitOfWork.Vehicles.GetByIdAsync(ad.VehicleId);
+            if (vehicle == null) return false;
+
+            vehicle.MakeId = model.MakeId;
+            vehicle.ModelId = model.ModelId;
+            vehicle.VehicleTypeId = model.VehicleTypeId;
+            vehicle.Year = model.Year;
+            vehicle.Mileage = model.Mileage;
+            vehicle.VIN = model.VIN;
+            vehicle.FuelType = model.FuelType;
+            vehicle.TransmissionType = model.TransmissionType;
+            vehicle.BodyStyle = model.BodyStyle;
+            vehicle.Condition = model.Condition;
+            vehicle.HorsePower = model.HorsePower;
+            vehicle.EngineSize = model.EngineSize;
+            vehicle.Cylinders = model.Cylinders;
+            vehicle.Color = model.Color;
+            vehicle.InteriorColor = model.InteriorColor;
+            vehicle.Doors = model.Doors;
+            vehicle.Seats = model.Seats;
+            vehicle.City = model.City;
+            vehicle.Region = model.Region;
+            vehicle.Description = model.Description;
+            vehicle.Features = model.Features;
+            vehicle.Price = model.Price;
+
+            _unitOfWork.Vehicles.Update(vehicle);
+
+            ad.Title = model.Title;
+            ad.Description = model.Description;
+            ad.Price = model.Price;
+            ad.IsNegotiable = model.IsNegotiable;
+
+            _unitOfWork.Advertisements.Update(ad);
+
+            if (!string.IsNullOrEmpty(model.ImagesToDeleteJson) && model.ImagesToDeleteJson != "[]")
+            {
+                var imagesToDelete = System.Text.Json.JsonSerializer.Deserialize<List<string>>(model.ImagesToDeleteJson);
+                if (imagesToDelete != null && imagesToDelete.Any())
+                {
+                    var existingImages = await _unitOfWork.VehicleImages.FindAsync(i => i.VehicleId == vehicle.Id);
+                    foreach (var imageUrl in imagesToDelete)
+                    {
+                        var imageToDelete = existingImages.FirstOrDefault(i => i.ImageUrl == imageUrl);
+                        if (imageToDelete != null)
+                        {
+                            _unitOfWork.VehicleImages.Remove(imageToDelete);
+                        }
+                    }
+                }
+            }
+
+            if (model.NewImages != null && model.NewImages.Any())
+            {
+                var newImageUrls = await _imageService.SaveVehicleImagesAsync(vehicle.Id, model.NewImages);
+                var maxOrder = (await _unitOfWork.VehicleImages.FindAsync(i => i.VehicleId == vehicle.Id))
+                    .OrderByDescending(i => i.DisplayOrder)
+                    .FirstOrDefault()?.DisplayOrder ?? 0;
+
+                int order = maxOrder + 1;
+                foreach (var url in newImageUrls)
+                {
+                    var image = new VehicleImage
+                    {
+                        Id = Guid.NewGuid(),
+                        VehicleId = vehicle.Id,
+                        ImageUrl = url,
+                        IsMain = false,
+                        DisplayOrder = order++
+                    };
+                    await _unitOfWork.VehicleImages.AddAsync(image);
+                }
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAdvertisementAsync(Guid advertisementId, Guid currentUserId, bool isAdmin)
+        {
+            var advertisements = await _unitOfWork.Advertisements.GetAllAsync();
+            var ad = advertisements.FirstOrDefault(a => a.Id == advertisementId);
+
+            if (ad == null) return false;
+            if (!isAdmin && ad.UserId != currentUserId) return false;
+
+            var vehicle = await _unitOfWork.Vehicles.GetByIdAsync(ad.VehicleId);
+            if (vehicle != null)
+            {
+                await _imageService.DeleteVehicleImagesAsync(vehicle.Id);
+                var images = await _unitOfWork.VehicleImages.FindAsync(i => i.VehicleId == vehicle.Id);
+                foreach (var img in images) _unitOfWork.VehicleImages.Remove(img);
+                _unitOfWork.Vehicles.Remove(vehicle);
+            }
+
+            _unitOfWork.Advertisements.Remove(ad);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
     }
 }
